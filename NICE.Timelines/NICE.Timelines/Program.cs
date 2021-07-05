@@ -33,6 +33,10 @@ namespace NICE.Timelines
             SeriLogger.Configure(Configuration);
 
             var scope = _serviceProvider.CreateScope();
+
+            var context = scope.ServiceProvider.GetService<TimelinesContext>();
+            context.Database.Migrate();
+
             await scope.ServiceProvider.GetRequiredService<ISyncService>().Process(); //entry point
 
             DisposeServices();
