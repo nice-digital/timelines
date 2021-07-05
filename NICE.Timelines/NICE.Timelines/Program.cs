@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NICE.Timelines.Configuration;
+using NICE.Timelines.DB.Models;
 using NICE.Timelines.Services;
 using Serilog;
 
@@ -12,7 +15,7 @@ namespace NICE.Timelines
     {
         private static ServiceProvider _serviceProvider;
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             //unusually for a console app, using appsettings.json + secrets.json for configuration, for consistency with other projects and also for the secrets support - because it's a public repo.
             IConfiguration Configuration = new ConfigurationBuilder()
@@ -24,17 +27,18 @@ namespace NICE.Timelines
 
             var clickUpConfig = new ClickUpConfig();
             Configuration.Bind("ClickUp", clickUpConfig);
-            RegisterServices(clickUpConfig);
+
+            RegisterServices(clickUpConfig, Configuration.GetConnectionString("DefaultConnection"));
 
             SeriLogger.Configure(Configuration);
 
             var scope = _serviceProvider.CreateScope();
-            scope.ServiceProvider.GetRequiredService<ISyncService>().Process(); //entry point
+            await scope.ServiceProvider.GetRequiredService<ISyncService>().Process(); //entry point
 
             DisposeServices();
         }
 
-        private static void RegisterServices(ClickUpConfig clickUpConfig)
+        private static void RegisterServices(ClickUpConfig clickUpConfig, string databaseConnectionString)
         {
             var services = new ServiceCollection(); //again unusually for a console app, setting up DI, in order to support testing.
 
@@ -44,6 +48,8 @@ namespace NICE.Timelines
             services.AddTransient<IClickUpService, ClickUpService>();
             services.AddHttpClient();
 
+            services.AddDbContext<TimelinesContext>(options => options.UseSqlServer(databaseConnectionString));
+            
             _serviceProvider = services.BuildServiceProvider(validateScopes: true);
         }
 
