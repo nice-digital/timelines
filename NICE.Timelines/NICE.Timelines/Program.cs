@@ -25,7 +25,7 @@ namespace NICE.Timelines
                 .AddCommandLine(args)
                 .Build();
 
-            var clickUpConfig = new ClickUpConfig();
+            ClickUpConfig clickUpConfig = new ClickUpConfig();
             Configuration.Bind("ClickUp", clickUpConfig);
 
             RegisterServices(clickUpConfig, Configuration.GetConnectionString("DefaultConnection"));

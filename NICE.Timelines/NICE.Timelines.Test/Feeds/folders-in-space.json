@@ -1,0 +1,143 @@
+{
+  "folders": [
+    {
+      "id": "623",
+      "name": "Folder one",
+      "orderindex": 6,
+      "override_statuses": false,
+      "hidden": false,
+      "space": {
+        "id": "127",
+        "name": "Space for testing"
+      },
+      "task_count": "264",
+      "archived": false,
+      "statuses": [],
+      "lists": [
+        {
+          "id": "266",
+          "name": "List one",
+          "orderindex": 2,
+          "status": null,
+          "priority": null,
+          "assignee": null,
+          "task_count": 264,
+          "due_date": null,
+          "start_date": null,
+          "space": {
+            "id": "127",
+            "name": "Space for testing",
+            "access": true
+          },
+          "archived": false,
+          "override_statuses": true,
+          "statuses": [
+            {
+              "id": "subcat65442266_subcat63550616_subcat63550579_subcat63547567_subcat63547534_subcat63547525_s75506782_6RDiWVGs",
+              "status": "Open",
+              "orderindex": 0,
+              "color": "#d3d3d3",
+              "type": "open"
+            },
+            {
+              "id": "subcat65442266_subcat63550616_subcat63550579_subcat63547567_subcat63547534_subcat63547525_s75506782_Ic8H8sUs",
+              "status": "Closed",
+              "orderindex": 1,
+              "color": "#6bc950",
+              "type": "closed"
+            }
+          ],
+          "permission_level": "create"
+        }
+      ],
+      "permission_level": "create"
+    },
+    {
+      "id": "167",
+      "name": "Folder two",
+      "orderindex": 8,
+      "override_statuses": false,
+      "hidden": false,
+      "space": {
+        "id": "127",
+        "name": "Space for testing"
+      },
+      "task_count": "83",
+      "archived": false,
+      "statuses": [],
+      "lists": [
+        {
+          "id": "539",
+          "name": "List two",
+          "orderindex": 12,
+          "status": null,
+          "priority": null,
+          "assignee": null,
+          "task_count": 49,
+          "due_date": null,
+          "start_date": null,
+          "space": {
+            "id": "127",
+            "name": "Space for testing",
+            "access": true
+          },
+          "archived": false,
+          "override_statuses": true,
+          "statuses": [
+            {
+              "id": "subcat65482539_subcat57095384_subcat55082075_subcat55081874_subcat55050491_subcat55050376_subcat55050321_subcat55050184_subcat55050159_subcat55050140_subcat55050038_subcat55050024_s41761186_wZYmLLoN",
+              "status": "Open",
+              "orderindex": 0,
+              "color": "#d3d3d3",
+              "type": "open"
+            },
+            {
+              "id": "subcat65482539_subcat57095384_subcat55082075_subcat55081874_subcat55050491_subcat55050376_subcat55050321_subcat55050184_subcat55050159_subcat55050140_subcat55050038_subcat55050024_s41761186_nQ0IOjc2",
+              "status": "Closed",
+              "orderindex": 1,
+              "color": "#6bc950",
+              "type": "closed"
+            }
+          ],
+          "permission_level": "create"
+        },
+        {
+          "id": "874",
+          "name": "New timeline",
+          "orderindex": 13,
+          "status": null,
+          "priority": null,
+          "assignee": null,
+          "task_count": 34,
+          "due_date": null,
+          "start_date": null,
+          "space": {
+            "id": "127",
+            "name": "Space for testing",
+            "access": true
+          },
+          "archived": false,
+          "override_statuses": true,
+          "statuses": [
+            {
+              "id": "subcat65482874_subcat55082099_subcat55081882_subcat55050146_subcat55050035_subcat55050030_subcat55049884_subcat55049262_subcat55049089_subcat55048224_subcat55048174_s41758968_Y0z4dy0a",
+              "status": "Open",
+              "orderindex": 0,
+              "color": "#d3d3d3",
+              "type": "open"
+            },
+            {
+              "id": "subcat65482874_subcat55082099_subcat55081882_subcat55050146_subcat55050035_subcat55050030_subcat55049884_subcat55049262_subcat55049089_subcat55048224_subcat55048174_s41758968_eQmgub73",
+              "status": "Closed",
+              "orderindex": 1,
+              "color": "#6bc950",
+              "type": "closed"
+            }
+          ],
+          "permission_level": "create"
+        }
+      ],
+      "permission_level": "create"
+    }
+  ]
+}

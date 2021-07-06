@@ -1,14 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace NICE.Timelines.Configuration
 {
     public class ClickUpConfig
     {
+        public static ClickUpConfig Current { get; private set; }
+        public ClickUpConfig()
+        {
+            Current = this;
+        }
+
         public string AccessToken { get; set; }
-        public string SpaceId { get; set; }
+        public IEnumerable<string> SpaceIds { get; set; }
+        public string BaseUrl { get; set; }
+        public string GetFolders { get; set; }
+
     }
 }

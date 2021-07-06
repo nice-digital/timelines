@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using NICE.Timelines.Configuration;
 
 namespace NICE.Timelines.Services
 {
@@ -11,9 +12,11 @@ namespace NICE.Timelines.Services
     public class SyncService : ISyncService
     {
         private readonly IClickUpService _clickUpService;
+        private readonly ClickUpConfig _clickUpConfig;
 
-        public SyncService( IClickUpService clickUpService)
+        public SyncService(ClickUpConfig clickUpConfig, IClickUpService clickUpService)
         {
+            _clickUpConfig = clickUpConfig;
             _clickUpService = clickUpService;
         }
 
@@ -21,9 +24,14 @@ namespace NICE.Timelines.Services
         {
             Console.WriteLine("Started processing");
 
-            var record = await _clickUpService.GetSpace();
+            foreach (var spaceId in _clickUpConfig.SpaceIds)
+            {
+                Console.WriteLine($"Started with space: {spaceId}");
 
-            Console.WriteLine(record);
+                var record = await _clickUpService.ProcessSpace(spaceId);
+
+                Console.WriteLine($"finished with space: {spaceId} records saved or updated: {record}");
+            }
 
             Console.WriteLine("Ended processing");
         }

@@ -1,21 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NICE.Timelines.Configuration;
 using NICE.Timelines.Models;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace NICE.Timelines.Services
 {
     public interface IClickUpService
     {
-        Task<ClickUpSpace> GetSpace();
+        Task<int> ProcessSpace(string spaceId);
     }
 
     public class ClickUpService : IClickUpService
@@ -31,30 +28,36 @@ namespace NICE.Timelines.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<ClickUpSpace> GetSpace()
+        public async Task<int> ProcessSpace(string spaceId)
         {
-            var spaceId = _clickUpConfig.SpaceId;
-            var relativeUri = $"space/{spaceId}/folder?archived=false";
-            var requestUri = new Uri(new Uri("https://api.clickup.com/api/v2/"), relativeUri);
+            var recordsSaveOrUpdated = 0;
+
+            var allFoldersInSpace = (await GetFoldersInSpace(spaceId)).Folders;
+
+            return recordsSaveOrUpdated;
+        }
+
+        public async Task<ClickUpFolders> GetFoldersInSpace(string spaceId)
+        {
+            var relativeUri = string.Format(_clickUpConfig.GetFolders, spaceId);
+            return await ReturnClickUpData<ClickUpFolders>(relativeUri);
+        }
+
+        public async Task<T> ReturnClickUpData<T>(string relativeUri)
+        {
+            var requestUri = _clickUpConfig.BaseUrl + relativeUri;
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
             httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue(_clickUpConfig.AccessToken);
-            var httpClient = _httpClientFactory.CreateClient();
-            try
-            {
-                using var response = await httpClient.SendAsync(httpRequestMessage);
-                if (response.StatusCode != HttpStatusCode.OK)
-                {
-                    throw new Exception($"Non-200 received from ClickUp: {(int) response.StatusCode}");
-                }
 
-                var responseJson = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<ClickUpSpace>(responseJson);
-            }
-            catch (Exception e)
+            var httpClient = _httpClientFactory.CreateClient();
+            using var response = await httpClient.SendAsync(httpRequestMessage);
+            if (response.StatusCode != HttpStatusCode.OK)
             {
-                _logger.Log(LogLevel.Error, e.Message);
-                return null;
+                throw new Exception($"Non-200 received from ClickUp: {(int) response.StatusCode}");
             }
+
+            var responseJson = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<T>(responseJson);
         }
     }
 }
