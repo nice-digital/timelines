@@ -1,0 +1,155 @@
+{
+  "tasks":  [
+    {
+      "id": "9hx",
+      "custom_id": null,
+      "name": "New Task Name",
+      "text_content": "New Task Description",
+      "description": "New Task Description",
+      "status": {
+        "status": "Open",
+        "color": "#d3d3d3",
+        "orderindex": 0,
+        "type": "open"
+      },
+      "orderindex": "1.00000000000000000000000000000000",
+      "date_created": "1567780450202",
+      "date_updated": "1567780450202",
+      "date_closed": null,
+      "creator": {
+        "id": 183,
+        "username": "John Doe",
+        "color": "#827718",
+        "profilePicture": "https://attachments-public.clickup.com/profilePictures/183_abc.jpg"
+      },
+      "assignees": [],
+      "checklists": [],
+      "tags": [],
+      "parent": null,
+      "priority": null,
+      "due_date": "1508369194377",
+      "start_date": null,
+      "time_estimate": null,
+      "time_spent": null,
+      "custom_fields": [
+        {
+          "id": "0a52c486-5f05-403b-b4fd-c512ff05131c",
+          "name": "My Number field",
+          "type": "checkbox",
+          "type_config": {},
+          "date_created": "1622176979540",
+          "hide_from_guests": false,
+          "value": "23",
+          "required": true
+        },
+        {
+          "id": "03efda77-c7a0-42d3-8afd-fd546353c2f5",
+          "name": "My Text field",
+          "type": "short_text",
+          "type_config": {},
+          "date_created": "1622176979540",
+          "hide_from_guests": false,
+          "value": "Text field input",
+          "required": false
+        },
+        {
+          "id": "f4d2a20d-6759-4420-b853-222dbe2589d5",
+          "name": "My People",
+          "type": "users",
+          "type_config": {
+            "include_guests": false,
+            "include_team_members": false
+          },
+          "date_created": "1618440378816",
+          "hide_from_guests": false,
+          "required": false
+        }
+      ],
+      "list": {
+        "id": "123"
+      },
+      "folder": {
+        "id": "456"
+      },
+      "space": {
+        "id": "789"
+      },
+      "url": "https://app.clickup.com/t/9hx"
+    },
+    {
+      "id": "9hz",
+      "name": "Second task",
+      "text_content": "New Task Description",
+      "description": "New Task Description",
+      "status": {
+        "status": "Open",
+        "color": "#d3d3d3",
+        "orderindex": 0,
+        "type": "open"
+      },
+      "orderindex": "2.00000000000000000000000000000000",
+      "date_created": "1567780450202",
+      "date_updated": "1567780450202",
+      "date_closed": null,
+      "creator": {
+        "id": 183,
+        "username": "John Doe",
+        "color": "#827718",
+        "profilePicture": "https://attachments-public.clickup.com/profilePictures/183_abc.jpg"
+      },
+      "assignees": [],
+      "checklists": [],
+      "tags": [],
+      "parent": null,
+      "priority": null,
+      "due_date": null,
+      "start_date": null,
+      "time_estimate": null,
+      "time_spent": null,
+      "custom_fields": [
+        {
+          "id": "0a52c486-5f05-403b-b4fd-c512ff05131c",
+          "name": "My Number field",
+          "type": "checkbox",
+          "type_config": {},
+          "date_created": "1622176979540",
+          "hide_from_guests": false,
+          "value": "23",
+          "required": true
+        },
+        {
+          "id": "03efda77-c7a0-42d3-8afd-fd546353c2f5",
+          "name": "My Text field",
+          "type": "short_text",
+          "type_config": {},
+          "date_created": "1622176979540",
+          "hide_from_guests": false,
+          "value": "Text field input",
+          "required": false
+        },
+        {
+          "id": "f4d2a20d-6759-4420-b853-222dbe2589d5",
+          "name": "My People",
+          "type": "users",
+          "type_config": {
+            "include_guests": false,
+            "include_team_members": false
+          },
+          "date_created": "1618440378816",
+          "hide_from_guests": false,
+          "required": false
+        }
+      ],
+      "list": {
+        "id": "123"
+      },
+      "folder": {
+        "id": "456"
+      },
+      "space": {
+        "id": "789"
+      },
+      "url": "https://app.clickup.com/t/9hz"
+    }
+  ]
+}

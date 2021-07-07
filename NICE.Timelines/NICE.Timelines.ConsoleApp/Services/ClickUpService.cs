@@ -29,43 +29,63 @@ namespace NICE.Timelines.Services
             _httpClientFactory = httpClientFactory;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-
+        
         public async Task<int> ProcessSpace(string spaceId)
         {
             var allListsInSpace = new List<ClickUpList>();
             var recordsSaveOrUpdated = 0;
 
-            var allFoldersInSpace = (await GetFoldersInSpace(spaceId)).Folders;
-
+            var allFoldersInSpace = (await GetFoldersInSpaceAsync(spaceId)).Folders;
             if (allFoldersInSpace.Any())
+                allListsInSpace = await GetListsInFolder(allFoldersInSpace);
+                    
+            var folderlessLists = (await GetListsInSpaceThatAreNotInFolders(spaceId)).Lists;
+            if (folderlessLists.Any())
+                allListsInSpace.AddRange(folderlessLists);
+
+            foreach (var list in allListsInSpace) //a list should have a unique ACID
             {
-                foreach (var folder in allFoldersInSpace)
-                {
-                    var lists = (await GetListsInFolder(folder.Id)).Lists;
-                    if (lists.Any())
-                    {
-                        allListsInSpace.AddRange(lists);
-                    }
-                }
+                var tasks = (await GetTasksInList(list.Id)).Tasks;
+                AddIdsToDatabase(tasks);
             }
 
             return recordsSaveOrUpdated;
         }
 
-        public async Task<ClickUpFolders> GetFoldersInSpace(string spaceId)
+        private async Task<ClickUpFolders> GetFoldersInSpaceAsync(string spaceId)
         {
-            var relativeUri = string.Format(_clickUpConfig.GetFolders, spaceId);
-            return await ReturnClickUpData<ClickUpFolders>(relativeUri);
+            return await ReturnClickUpData<ClickUpFolders>(_clickUpConfig.GetFolders, spaceId);
         }
 
-        private async Task<ClickUpLists> GetListsInFolder(string folderId)
+        private async Task<List<ClickUpList>> GetListsInFolder(IList<ClickUpFolder> allFoldersInSpace)
         {
-            var relativeUri = string.Format(_clickUpConfig.GetLists, folderId);
-            return await ReturnClickUpData<ClickUpLists>(relativeUri);
+            var allListsInSpace = new List<ClickUpList>();
+
+            foreach (var folder in allFoldersInSpace)
+            {
+                var lists = (await ReturnClickUpData<ClickUpLists>(_clickUpConfig.GetLists, folder.Id)).Lists;
+                if (lists.Any())
+                {
+                    allListsInSpace.AddRange(lists);
+                }
+            }
+            
+            return allListsInSpace;
         }
 
-        public async Task<T> ReturnClickUpData<T>(string relativeUri)
+        private async Task<ClickUpLists> GetListsInSpaceThatAreNotInFolders(string spaceId)
         {
+            return (await ReturnClickUpData<ClickUpLists>(_clickUpConfig.GetFolderlessLists, spaceId));
+        }
+
+        private async Task<ClickUpTasks> GetTasksInList(string listId)
+        {
+            return (await ReturnClickUpData<ClickUpTasks>(_clickUpConfig.GetTasks, listId));
+        }
+
+        private async Task<T> ReturnClickUpData<T>(string uri, string id)
+        {
+            var relativeUri = string.Format(uri, id);
             var requestUri = _clickUpConfig.BaseUrl + relativeUri;
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
             httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue(_clickUpConfig.AccessToken);
@@ -73,12 +93,15 @@ namespace NICE.Timelines.Services
             var httpClient = _httpClientFactory.CreateClient();
             using var response = await httpClient.SendAsync(httpRequestMessage);
             if (response.StatusCode != HttpStatusCode.OK)
-            {
                 throw new Exception($"Non-200 received from ClickUp: {(int) response.StatusCode}");
-            }
 
             var responseJson = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<T>(responseJson);
+        }
+
+        private void AddIdsToDatabase(IEnumerable<ClickUpTask> tasks)
+        {
+
         }
     }
 }

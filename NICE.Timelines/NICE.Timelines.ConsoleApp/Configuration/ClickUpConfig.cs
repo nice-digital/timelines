@@ -16,6 +16,8 @@ namespace NICE.Timelines.Configuration
         public string BaseUrl { get; set; }
         public string GetFolders { get; set; }
         public string GetLists { get; set; }
+        public string GetFolderlessLists { get; set; }
+        public string GetTasks { get; set; }
 
     }
 }
