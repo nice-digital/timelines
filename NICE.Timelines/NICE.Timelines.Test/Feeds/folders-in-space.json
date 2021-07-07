@@ -1,0 +1,42 @@
+{
+  "folders": [
+    {
+      "id": "457",
+      "name": "Updated Folder Name",
+      "orderindex": 0,
+      "override_statuses": false,
+      "hidden": false,
+      "space": {
+        "id": "789",
+        "name": "Space Name",
+        "access": true
+      },
+      "task_count": "0",
+      "lists": [
+        {
+          "id": "124",
+          "name": "Updated List Name"
+        }
+      ]
+    },
+    {
+      "id": "458",
+      "name": "Second Folder Name",
+      "orderindex": 1,
+      "override_statuses": false,
+      "hidden": false,
+      "space": {
+        "id": "789",
+        "name": "Space Name",
+        "access": true
+      },
+      "task_count": "0",
+      "lists": [
+        {
+          "id": "125",
+          "name": "Second List"
+        }
+      ]
+    }
+  ]
+}
