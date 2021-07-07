@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NICE.Timelines", "NICE.Timelines\NICE.Timelines.csproj", "{6F595D49-761C-44A6-91E1-227FA3C90A7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NICE.Timelines.ConsoleApp", "NICE.Timelines\NICE.Timelines.ConsoleApp.csproj", "{6F595D49-761C-44A6-91E1-227FA3C90A7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NICE.Timelines.Test", "NICE.Timelines.Test\NICE.Timelines.Test.csproj", "{707C9A67-C4EA-4345-B086-991D03DA2651}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NICE.Timelines.Test", "NICE.Timelines.Test\NICE.Timelines.Test.csproj", "{707C9A67-C4EA-4345-B086-991D03DA2651}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NICE.Timelines.DB", "NICE.Timelines.DB\NICE.Timelines.DB.csproj", "{B9C50A22-F629-431D-827B-EF7048A46E68}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NICE.Timelines.DB", "NICE.Timelines.DB\NICE.Timelines.DB.csproj", "{B9C50A22-F629-431D-827B-EF7048A46E68}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
