@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NICE.Timelines\NICE.Timelines.ConsoleApp.csproj" />
+    <ProjectReference Include="..\NICE.Timelines.ConsoleApp\NICE.Timelines.ConsoleApp.csproj" />
   </ItemGroup>
 
   <ItemGroup>
