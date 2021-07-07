@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Security.Policy;
 
 namespace NICE.Timelines.Configuration
 {
@@ -14,6 +15,7 @@ namespace NICE.Timelines.Configuration
         public IEnumerable<string> SpaceIds { get; set; }
         public string BaseUrl { get; set; }
         public string GetFolders { get; set; }
+        public string GetLists { get; set; }
 
     }
 }

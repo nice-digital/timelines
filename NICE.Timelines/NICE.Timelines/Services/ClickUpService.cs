@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -30,9 +32,22 @@ namespace NICE.Timelines.Services
 
         public async Task<int> ProcessSpace(string spaceId)
         {
+            var allListsInSpace = new List<ClickUpList>();
             var recordsSaveOrUpdated = 0;
 
             var allFoldersInSpace = (await GetFoldersInSpace(spaceId)).Folders;
+
+            if (allFoldersInSpace.Any())
+            {
+                foreach (var folder in allFoldersInSpace)
+                {
+                    var lists = (await GetListsInFolder(folder.Id)).Lists;
+                    if (lists.Any())
+                    {
+                        allListsInSpace.AddRange(lists);
+                    }
+                }
+            }
 
             return recordsSaveOrUpdated;
         }
@@ -41,6 +56,12 @@ namespace NICE.Timelines.Services
         {
             var relativeUri = string.Format(_clickUpConfig.GetFolders, spaceId);
             return await ReturnClickUpData<ClickUpFolders>(relativeUri);
+        }
+
+        private async Task<ClickUpLists> GetListsInFolder(string folderId)
+        {
+            var relativeUri = string.Format(_clickUpConfig.GetLists, folderId);
+            return await ReturnClickUpData<ClickUpLists>(relativeUri);
         }
 
         public async Task<T> ReturnClickUpData<T>(string relativeUri)
