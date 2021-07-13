@@ -7,26 +7,26 @@ namespace NICE.Timelines.DB.Models
         public TimelineTask()
         { }
 
-        public TimelineTask(int acid, int stepId, int stageId, string clickUpSpaceId, string clickUpFolderId, string clickUpListId, string clickUpTaskId, DateTime? dueDate, DateTime? actualDate, Step step, Stage stage)
+        public TimelineTask(int acid, int taskTypeId, int phaseId, string clickUpSpaceId, string clickUpFolderId, string clickUpListId, string clickUpTaskId, DateTime? dueDate, DateTime? actualDate, TaskType taskType, Phase phase)
         {
             ACID = acid;
-            StepId = stepId;
-            StageId = stageId;
+            TaskTypeId = taskTypeId;
+            PhaseId = phaseId;
             ClickUpSpaceId = clickUpSpaceId;
             ClickUpFolderId = clickUpFolderId;
             ClickUpListId = clickUpListId;
             ClickUpTaskId = clickUpTaskId;
             DueDate = dueDate;
             ActualDate = actualDate;
-            Step = step;
-            Stage = stage;
+            TaskType = taskType;
+            Phase = phase;
         }
 
         public int TimelineTaskId { get; set; }
         public int ACID { get; set; }
 
-        public int StepId { get; set; }
-        public int StageId { get; set; }
+        public int TaskTypeId { get; set; }
+        public int PhaseId { get; set; }
 
 
         public string ClickUpSpaceId { get; set; }
@@ -37,7 +37,7 @@ namespace NICE.Timelines.DB.Models
         public DateTime? DueDate { get; set; }
         public DateTime? ActualDate { get; set; }
 
-        public Step Step { get; set; }
-        public Stage Stage { get; set; }
+        public TaskType TaskType { get; set; }
+        public Phase Phase { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace NICE.Timelines.Models
+namespace NICE.Timelines.Common.Models
 {
     public class ClickUpSpace
     {

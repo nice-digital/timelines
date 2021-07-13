@@ -37,23 +37,23 @@ namespace NICE.Timelines.DB.Models
 
                 entity.Property(e => e.ACID).HasColumnName("ACID");
 
-                entity.Property(e => e.StepId).IsRequired();
-                entity.Property(e => e.StageId).IsRequired();
+                entity.Property(e => e.TaskTypeId).IsRequired();
+                entity.Property(e => e.PhaseId).IsRequired();
 
                 entity.Property(e => e.ClickUpSpaceId).HasMaxLength(255);
                 entity.Property(e => e.ClickUpFolderId).HasMaxLength(255);
                 entity.Property(e => e.ClickUpListId).HasMaxLength(255);
                 entity.Property(e => e.ClickUpTaskId).HasMaxLength(255);
 
-                entity.HasOne(e => e.Stage)
+                entity.HasOne(e => e.Phase)
                     .WithMany(e => e.TimelineTasks)
-                    .HasForeignKey(e => e.StageId)
+                    .HasForeignKey(e => e.PhaseId)
                     .HasConstraintName("TimelineTasks_Stage")
                     .IsRequired();
 
-                entity.HasOne(e => e.Step)
+                entity.HasOne(e => e.TaskType)
                     .WithMany(e => e.TimelineTasks)
-                    .HasForeignKey(e => e.StepId)
+                    .HasForeignKey(e => e.TaskTypeId)
                     .HasConstraintName("TimelineTasks_Step")
                     .IsRequired();
             });

@@ -6,8 +6,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using NICE.Timelines.Common.Models;
 using NICE.Timelines.Configuration;
-using NICE.Timelines.Models;
+using NICE.Timelines.DB.Services;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace NICE.Timelines.Services
@@ -20,12 +21,16 @@ namespace NICE.Timelines.Services
     public class ClickUpService : IClickUpService
     {
         private readonly ClickUpConfig _clickUpConfig;
+        private readonly IDatabaseService _databaseService;
+        private readonly IConversionService _conversionService;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<ClickUpService> _logger;
 
-        public ClickUpService(ClickUpConfig clickUpConfig, IHttpClientFactory httpClientFactory, ILogger<ClickUpService> logger)
+        public ClickUpService(ClickUpConfig clickUpConfig, IDatabaseService databaseService, IConversionService conversionService, IHttpClientFactory httpClientFactory, ILogger<ClickUpService> logger)
         {
             _clickUpConfig = clickUpConfig;
+            _databaseService = databaseService;
+            _conversionService = conversionService;
             _httpClientFactory = httpClientFactory;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -46,7 +51,12 @@ namespace NICE.Timelines.Services
             foreach (var list in allListsInSpace) //a list should have a unique ACID
             {
                 var tasks = (await GetTasksInList(list.Id)).Tasks;
-                AddIdsToDatabase(tasks);
+                int? acid = null;
+                foreach (var task in tasks) //TODO: batching reduce the number of database hits
+                {
+                    acid = _conversionService.GetACIDFromClickUpTask(task); //TODO: get the ACID from the list, not from a task.
+                    recordsSaveOrUpdated += await _databaseService.SaveOrUpdateTimelineTask(task);
+                }
             }
 
             return recordsSaveOrUpdated;
@@ -93,15 +103,13 @@ namespace NICE.Timelines.Services
             var httpClient = _httpClientFactory.CreateClient();
             using var response = await httpClient.SendAsync(httpRequestMessage);
             if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.LogError($"Non-200 received from ClickUp: {(int)response.StatusCode}");
                 throw new Exception($"Non-200 received from ClickUp: {(int) response.StatusCode}");
+            }
 
             var responseJson = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<T>(responseJson);
-        }
-
-        private void AddIdsToDatabase(IEnumerable<ClickUpTask> tasks)
-        {
-
         }
     }
 }

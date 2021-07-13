@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NICE.Timelines.Configuration;
 using NICE.Timelines.DB.Models;
+using NICE.Timelines.DB.Services;
 using NICE.Timelines.Services;
 using Serilog;
 
@@ -38,7 +39,7 @@ namespace NICE.Timelines
             context.Database.Migrate();
 
             await scope.ServiceProvider.GetRequiredService<ISyncService>().Process(); //entry point
-
+            
             DisposeServices();
         }
 
@@ -53,7 +54,9 @@ namespace NICE.Timelines
             services.AddHttpClient();
 
             services.AddDbContext<TimelinesContext>(options => options.UseSqlServer(databaseConnectionString));
-            
+            services.AddTransient<IConversionService, ConversionService>();
+            services.AddTransient<IDatabaseService, DatabaseService>();
+
             _serviceProvider = services.BuildServiceProvider(validateScopes: true);
         }
 

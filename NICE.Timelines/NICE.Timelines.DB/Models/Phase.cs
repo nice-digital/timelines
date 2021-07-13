@@ -2,10 +2,10 @@
 
 namespace NICE.Timelines.DB.Models
 {
-    public class Stage
+    public class Phase
     {
-        public int StageId { get; set; }
-        public string Description { get; set; }
+        public int PhaseId { get; set; }
+        public string PhaseDescription { get; set; }
 
         public ICollection<TimelineTask> TimelineTasks { get; set; }
     }

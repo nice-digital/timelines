@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NICE.Timelines.DB", "NICE.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NICE.Timelines.ConsoleApp", "NICE.Timelines.ConsoleApp\NICE.Timelines.ConsoleApp.csproj", "{D8314359-8C9C-4CA9-9D32-B4E57B8085AA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NICE.Timelines.Common", "NICE.Timelines.Common\NICE.Timelines.Common.csproj", "{D0C69819-B87C-4867-A18F-D1CDA5F5B12C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{D8314359-8C9C-4CA9-9D32-B4E57B8085AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8314359-8C9C-4CA9-9D32-B4E57B8085AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8314359-8C9C-4CA9-9D32-B4E57B8085AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0C69819-B87C-4867-A18F-D1CDA5F5B12C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0C69819-B87C-4867-A18F-D1CDA5F5B12C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0C69819-B87C-4867-A18F-D1CDA5F5B12C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0C69819-B87C-4867-A18F-D1CDA5F5B12C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

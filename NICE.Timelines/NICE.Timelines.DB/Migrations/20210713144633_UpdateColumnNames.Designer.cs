@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NICE.Timelines.DB.Models;
 
 namespace NICE.Timelines.DB.Migrations
 {
     [DbContext(typeof(TimelinesContext))]
-    partial class TimelinesContextModelSnapshot : ModelSnapshot
+    [Migration("20210713144633_UpdateColumnNames")]
+    partial class UpdateColumnNames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
