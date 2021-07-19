@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NICE.Timelines.Common.Models;
 using NICE.Timelines.Configuration;
+using NICE.Timelines.DB.Models;
 using NICE.Timelines.DB.Services;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -21,14 +22,16 @@ namespace NICE.Timelines.Services
     public class ClickUpService : IClickUpService
     {
         private readonly ClickUpConfig _clickUpConfig;
+        private readonly TimelinesContext _context;
         private readonly IDatabaseService _databaseService;
         private readonly IConversionService _conversionService;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<ClickUpService> _logger;
 
-        public ClickUpService(ClickUpConfig clickUpConfig, IDatabaseService databaseService, IConversionService conversionService, IHttpClientFactory httpClientFactory, ILogger<ClickUpService> logger)
+        public ClickUpService(ClickUpConfig clickUpConfig, TimelinesContext context, IDatabaseService databaseService, IConversionService conversionService, IHttpClientFactory httpClientFactory, ILogger<ClickUpService> logger)
         {
             _clickUpConfig = clickUpConfig;
+            _context = context;
             _databaseService = databaseService;
             _conversionService = conversionService;
             _httpClientFactory = httpClientFactory;
@@ -52,14 +55,17 @@ namespace NICE.Timelines.Services
             {
                 var tasks = (await GetTasksInList(list.Id)).Tasks;
                 int? acid = null;
-                foreach (var task in tasks) //TODO: batching reduce the number of database hits
+                foreach (var task in tasks)
                 {
                     acid = _conversionService.GetACIDFromClickUpTask(task); //TODO: get the ACID from the list, not from a task.
-                    recordsSaveOrUpdated += await _databaseService.SaveOrUpdateTimelineTask(task);
+                    await _databaseService.SaveOrUpdateTimelineTask(task);
                 }
+
+                var clickUpIdsThatShouldExistInTheDatabase = tasks.Select(task => task.ClickUpTaskId);
+                _databaseService.DeleteTasksAssociatedWithThisACIDExceptForTheseClickUpTaskIds(acid.Value, clickUpIdsThatShouldExistInTheDatabase);
             }
 
-            return recordsSaveOrUpdated;
+            return _context.SaveChanges(); ;
         }
 
         private async Task<ClickUpFolders> GetFoldersInSpaceAsync(string spaceId)

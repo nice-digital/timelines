@@ -23,6 +23,14 @@ namespace NICE.Timelines.DB.Services
         {
             var acid = GetACIDFromClickUpTask(clickUpTask);
 
+            var TaskTypeId = 0;
+            var stepField = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.TaskTypeId, StringComparison.InvariantCultureIgnoreCase));
+            if (stepField != null && stepField.Value.ValueKind != System.Text.Json.JsonValueKind.Undefined)
+            {
+                var index = stepField.Value.ToObject<int>();
+                TaskTypeId = int.Parse(stepField.ClickUpTypeConfig.Options[index].Name);
+            }
+
             return new TimelineTask();
         }
     }

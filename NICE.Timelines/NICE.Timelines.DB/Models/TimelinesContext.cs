@@ -9,7 +9,7 @@ namespace NICE.Timelines.DB.Models
         public TimelinesContext()
         { }
 
-        public TimelinesContext(DbContextOptions<TimelinesContext> options) : base(options)
+        public TimelinesContext(DbContextOptions options) : base(options)
         { }
 
         public virtual DbSet<TimelineTask> TimelineTasks { get; set; }

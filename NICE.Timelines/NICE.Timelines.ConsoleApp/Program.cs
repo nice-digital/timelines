@@ -2,8 +2,10 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using NICE.Timelines.Configuration;
 using NICE.Timelines.DB.Models;
 using NICE.Timelines.DB.Services;
@@ -53,9 +55,14 @@ namespace NICE.Timelines
             services.AddTransient<IClickUpService, ClickUpService>();
             services.AddHttpClient();
 
+            var contextOptionsBuilder = new DbContextOptionsBuilder<TimelinesContext>();
+            services.TryAddSingleton<IDbContextOptionsBuilderInfrastructure>(contextOptionsBuilder);
             services.AddDbContext<TimelinesContext>(options => options.UseSqlServer(databaseConnectionString));
+
             services.AddTransient<IConversionService, ConversionService>();
             services.AddTransient<IDatabaseService, DatabaseService>();
+
+
 
             _serviceProvider = services.BuildServiceProvider(validateScopes: true);
         }
