@@ -26,9 +26,9 @@ namespace NICE.Timelines.Test.Infrastructure
                 .Options;
         }
 
-        protected int AddTimelineTask(TimelinesContext context, int acid, int taskTypeId, int phaseId, string clickUpSpaceId, string clickUpFolderId, string clickUpListId, string clickUpTaskId, DateTime? dueDate, DateTime? actualDate)
+        protected int AddTimelineTask(TimelinesContext context, int acid, int taskTypeId, int phaseId, string phaseDescription, string clickUpSpaceId, string clickUpFolderId, string clickUpListId, string clickUpTaskId, DateTime? dueDate, DateTime? actualDate)
         {
-            var task = new TimelineTask(acid, taskTypeId,  phaseId, clickUpSpaceId, clickUpFolderId, clickUpListId, clickUpTaskId, dueDate, actualDate, null, null);
+            var task = new TimelineTask(acid, taskTypeId,  phaseId, phaseDescription, clickUpSpaceId, clickUpFolderId, clickUpListId, clickUpTaskId, dueDate, actualDate, null, null);
 
             context.TimelineTasks.Add(task);
             context.SaveChanges();
