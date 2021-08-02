@@ -53,19 +53,26 @@ namespace NICE.Timelines.Services
 
             foreach (var list in allListsInSpace) //a list should have a unique ACID
             {
-                var tasks = (await GetTasksInList(list.Id)).Tasks;
+                var keyDateTasks = (await GetTasksWithKeyDateInList(list.Id));
+                var masterScheduleTasks = (await GetTasksWithMasterScheduleInList(list.Id));
+                var tasks = keyDateTasks
+                    .Concat(masterScheduleTasks.Where(t =>
+                        !keyDateTasks.Any(x => x.ClickUpTaskId.Equals(t.ClickUpTaskId)))).ToList();
+
                 int? acid = null;
+
                 foreach (var task in tasks)
                 {
-                    acid = _conversionService.GetACIDFromClickUpTask(task); //TODO: get the ACID from the list, not from a task.
-                    await _databaseService.SaveOrUpdateTimelineTask(task);
+                    acid = _conversionService.GetACID(task); //TODO: get the ACID from the list, not from a task.
+                    _databaseService.SaveOrUpdateTimelineTask(task);
                 }
 
                 var clickUpIdsThatShouldExistInTheDatabase = tasks.Select(task => task.ClickUpTaskId);
-                _databaseService.DeleteTasksAssociatedWithThisACIDExceptForTheseClickUpTaskIds(acid.Value, clickUpIdsThatShouldExistInTheDatabase);
+                _databaseService.DeleteTasksAssociatedWithThisACIDExceptForTheseClickUpTaskIds(acid.Value,
+                    clickUpIdsThatShouldExistInTheDatabase);
             }
 
-            return _context.SaveChanges(); ;
+            return _context.SaveChanges();
         }
 
         private async Task<ClickUpFolders> GetFoldersInSpaceAsync(string spaceId)
@@ -94,14 +101,39 @@ namespace NICE.Timelines.Services
             return (await ReturnClickUpData<ClickUpLists>(_clickUpConfig.GetFolderlessLists, spaceId));
         }
 
-        private async Task<ClickUpTasks> GetTasksInList(string listId)
+        private async Task<List<ClickUpTask>> GetTasksWithKeyDateInList(string listId)
         {
-            return (await ReturnClickUpData<ClickUpTasks>(_clickUpConfig.GetTasks, listId));
+            var page = 0;
+            var tasks = new ClickUpTasks();
+            var allTasks = new List<ClickUpTask>();
+            do
+            {
+                tasks = (await ReturnClickUpData<ClickUpTasks>(_clickUpConfig.GetKeyDateTasks, listId, page));
+                allTasks.AddRange(tasks.Tasks);
+                page += 1;
+            } while (tasks.Tasks.Count() == 100);
+
+            return allTasks;
         }
 
-        private async Task<T> ReturnClickUpData<T>(string uri, string id)
+        private async Task<List<ClickUpTask>> GetTasksWithMasterScheduleInList(string listId)
         {
-            var relativeUri = string.Format(uri, id);
+            var page = 0;
+            var tasks = new ClickUpTasks();
+            var allTasks = new List<ClickUpTask>();
+            do
+            {
+                tasks = (await ReturnClickUpData<ClickUpTasks>(_clickUpConfig.GetMasterScheduleTasks, listId, page));
+                allTasks.AddRange(tasks.Tasks);
+                page += 1;
+            } while (tasks.Tasks.Count() == 100);
+
+            return allTasks;
+        }
+
+        private async Task<T> ReturnClickUpData<T>(string uri, string id, int? page = null)
+        {
+            var relativeUri = string.Format(uri, id, page);
             var requestUri = _clickUpConfig.BaseUrl + relativeUri;
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
             httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue(_clickUpConfig.AccessToken);
@@ -117,5 +149,12 @@ namespace NICE.Timelines.Services
             var responseJson = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<T>(responseJson);
         }
+
+        //private async Task<IEnumerable<ClickUpTask>> GetKeyDateTasksAsync(ClickUpList list)
+        //{
+        //    var page = 0;
+        //    var tasks = (await GetTasksWithKeyDateInList(list.Id, page)).Tasks;
+        //    return tasks;
+        //}
     }
 }

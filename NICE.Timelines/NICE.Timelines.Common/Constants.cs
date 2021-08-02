@@ -6,14 +6,16 @@
         {
             public static class Fields
             {
-                public const string ACID = "d5e3053f-b7d3-4b61-a358-7b8327040af5";
+                public const string ACID = "f673c2a1-4a09-45e6-b859-e3b0839c5402";
 
-                public const string TaskTypeId = "c92405fc-d4b5-487d-9a5c-ece99b72e728";
+                public const string TaskTypeId = "f82f0a8d-06bb-4845-a5e0-117a6605940c";
 
-                public const string PhaseId = "0aebe937-ee98-4d96-afc9-061a978e4a33";
-                public const string PhaseDescription = "54397225-dfe4-491b-a60f-a02d73ca4a4e";
+                //public const string PhaseId = "0bd8f8c3-1cf4-4d7f-9005-c04fd7ab6760";
+                public const string PhaseId = "13aee9a9-5d21-46bb-8821-70c155cacf75";
 
                 public const string ActualDate = "421ba5af-2c61-438f-978f-2dad19c7498c";
+
+                //public const string CompletedDate = "4f578ec2-3ea9-48cf-a194-e6dabded629c";
             }
         }
     }

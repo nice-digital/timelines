@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using NICE.Timelines.Common;
 using NICE.Timelines.Common.Models;
 using NICE.Timelines.DB.Models;
@@ -9,82 +11,95 @@ namespace NICE.Timelines.DB.Services
     public interface IConversionService
     {
         TimelineTask ConvertToTimelineTask(ClickUpTask clickUpTask);
-        int GetACIDFromClickUpTask(ClickUpTask clickUpTask);
-        int GetTaskTypeIdFromClickUpTask(ClickUpTask clickUpTask);
-        Phase GetPhaseFromClickUpTask(ClickUpTask clickUpTask);
-        DateTime? GetActualDateFromClickUpTask(ClickUpTask clickUpTask);
-        DateTime? GetDueDateFromClickUpTask(ClickUpTask clickUpTask);
+        int GetACID(ClickUpTask clickUpTask);
+        int GetTaskTypeId(ClickUpTask clickUpTask);
+        int GetPhaseId(ClickUpTask clickUpTask);
+        DateTime? GetActualDate(ClickUpTask clickUpTask);
+        DateTime? GetDueDate(ClickUpTask clickUpTask);
     }
 
     public class ConversionService : IConversionService
     {
-        public TimelineTask ConvertToTimelineTask(ClickUpTask clickUpTask)
-        {
-            var acid = GetACIDFromClickUpTask(clickUpTask);
-            var taskTypeId = GetTaskTypeIdFromClickUpTask(clickUpTask);
-            var phase = GetPhaseFromClickUpTask(clickUpTask);
-            var actualDate = GetActualDateFromClickUpTask(clickUpTask);
-            var dueDate = GetDueDateFromClickUpTask(clickUpTask);
+        private readonly ILogger<ConversionService> _logger;
 
-            return new TimelineTask(acid, taskTypeId, phase.PhaseId, phase.PhaseDescription, clickUpTask.Space.Id, clickUpTask.Folder.Id, clickUpTask.List.Id, clickUpTask.ClickUpTaskId, dueDate, actualDate, null, phase);
+        public ConversionService(ILogger<ConversionService> logger)
+        {
+            _logger = logger;
         }
 
-        public int GetACIDFromClickUpTask(ClickUpTask clickUpTask)
+        public TimelineTask ConvertToTimelineTask(ClickUpTask clickUpTask)
+        {
+            var acid = GetACID(clickUpTask);
+            var taskTypeId = GetTaskTypeId(clickUpTask);
+            var phaseId = GetPhaseId(clickUpTask);
+            var actualDate = GetActualDate(clickUpTask);
+            var dueDate = GetDueDate(clickUpTask);
+
+            return new TimelineTask(acid, taskTypeId, phaseId, clickUpTask.Space.Id, clickUpTask.Folder.Id, clickUpTask.List.Id, clickUpTask.ClickUpTaskId, dueDate, actualDate, null);
+        }
+
+        public int GetACID(ClickUpTask clickUpTask)
         {
             return int.Parse(clickUpTask.CustomFields.First(field => field.FieldId.Equals(Constants.ClickUp.Fields.ACID, StringComparison.InvariantCultureIgnoreCase)).Value.ToObject<string>());
             //TODO: ACID is a string in clickup. needs to be a number.
         }
 
-        public int GetTaskTypeIdFromClickUpTask(ClickUpTask clickUpTask)
+        public int GetTaskTypeId(ClickUpTask clickUpTask)
         {
-            var TaskTypeId = 0;
+            var taskTypeId = 0;
             var taskType = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.TaskTypeId, StringComparison.InvariantCultureIgnoreCase));
-            if (taskType != null && taskType.Value.ValueKind != System.Text.Json.JsonValueKind.Undefined)
+            if (taskType != null && taskType.Value.ValueKind != JsonValueKind.Undefined)
             {
-                var index = taskType.Value.ToObject<int>();
-                TaskTypeId = int.Parse(taskType.ClickUpTypeConfig.Options[index].Name);
-            }//TODO Error logging
-
-            return TaskTypeId;
-        }
-
-        public Phase GetPhaseFromClickUpTask(ClickUpTask clickUpTask)
-        {
-            var phase = new Phase();
-            phase.PhaseId = 0;
-            phase.PhaseDescription = "Not found";
-            var phaseField = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.PhaseId, StringComparison.InvariantCultureIgnoreCase));
-            if (phaseField != null && phaseField.Value.ValueKind != System.Text.Json.JsonValueKind.Undefined)
-            {
-                var index = phaseField.Value.ToObject<int>();
-                phase.PhaseId = int.Parse(phaseField.ClickUpTypeConfig.Options[index].Name);
-
-                phase.PhaseDescription = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.PhaseDescription, StringComparison.InvariantCultureIgnoreCase)).ClickUpTypeConfig.Options[index].Name;
+                var id = taskType.Value.ToObject<string>();
+                taskTypeId = int.Parse(id);
             }
-
-            return phase;
+            else
+                _logger.LogError($"taskType for task:{clickUpTask.ClickUpTaskId} is null or undefined");
+            
+            return taskTypeId;
         }
 
-        public DateTime? GetActualDateFromClickUpTask(ClickUpTask clickUpTask)
+        public int GetPhaseId(ClickUpTask clickUpTask)
+        {
+            var phaseId = 0;
+
+            var phaseField = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.PhaseId, StringComparison.InvariantCultureIgnoreCase));
+            if (phaseField != null && phaseField.Value.ValueKind != JsonValueKind.Undefined)
+            {
+                var id = phaseField.Value.ToObject<string>();
+                phaseId = int.Parse(id);
+            }
+            else
+                _logger.LogError($"phaseId for task:{clickUpTask.ClickUpTaskId} is null or undefined");
+
+            return phaseId;
+        }
+
+        public DateTime? GetActualDate(ClickUpTask clickUpTask)
         {
             DateTime? actualDate = null;
-            var actualDateStringJsonElement = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.ActualDate, StringComparison.InvariantCultureIgnoreCase))?.Value;
+            var actualDateValue = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.ActualDate, StringComparison.InvariantCultureIgnoreCase))?.Value;
 
-            if (actualDateStringJsonElement.HasValue)
+            if (actualDateValue != null && actualDateValue.Value.ValueKind != JsonValueKind.Undefined)
             {
-                var actualDateString = actualDateStringJsonElement.Value.ToStringObject();
-                if (!string.IsNullOrEmpty(actualDateString))
-                {
-                    actualDate = double.Parse(actualDateString).ToDateTime();
-                }
+                var actualDateString = actualDateValue.Value.ToObject<string>();
+                actualDate = double.Parse(actualDateString).ToDateTime();
             }
+            else
+                _logger.LogError($"Actual date for task:{clickUpTask.ClickUpTaskId} is null or empty");
 
             return actualDate;
         }
 
-        public DateTime? GetDueDateFromClickUpTask(ClickUpTask clickUpTask)
+        public DateTime? GetDueDate(ClickUpTask clickUpTask)
         {
-            return string.IsNullOrEmpty(clickUpTask.DueDateSecondsSinceUnixEpochAsString) ? null : double.Parse(clickUpTask.DueDateSecondsSinceUnixEpochAsString).ToDateTime();
+            DateTime? dueDate = null;
+            if (!string.IsNullOrEmpty(clickUpTask.DueDateSecondsSinceUnixEpochAsString)) 
+                dueDate = double.Parse(clickUpTask.DueDateSecondsSinceUnixEpochAsString).ToDateTime();
+            else
+                _logger.LogError($"dueDate for task:{clickUpTask.ClickUpTaskId} is null or empty");
+
+            return dueDate;
         }
     }
 }

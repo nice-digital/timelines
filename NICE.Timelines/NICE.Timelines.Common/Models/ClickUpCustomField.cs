@@ -16,5 +16,5 @@ namespace NICE.Timelines.Common.Models
 
         [JsonPropertyName("type_config")]
         public ClickUpTypeConfig ClickUpTypeConfig { get; set; }
-	}
+    }
 }

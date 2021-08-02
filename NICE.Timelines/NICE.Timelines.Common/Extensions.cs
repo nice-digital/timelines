@@ -11,14 +11,14 @@ namespace NICE.Timelines.Common
             return JsonSerializer.Deserialize<T>(json);
         }
 
-        public static string ToStringObject(this JsonElement element) //TODO: make the generic version work for all types..
-        {
-            if (element.ValueKind == JsonValueKind.Undefined)
-                return null;
+        //public static string ToStringObject(this JsonElement element) //TODO: make the generic version work for all types..
+        //{
+        //    if (element.ValueKind == JsonValueKind.Undefined)
+        //        return null;
 
-            var json = element.GetRawText();
-            return JsonSerializer.Deserialize<string>(json);
-        }
+        //    var json = element.GetRawText();
+        //    return JsonSerializer.Deserialize<string>(json);
+        //}
 
         public static DateTime? ToDateTime(this double millisecondsSinceUnixEpoch)
         {

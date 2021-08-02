@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
+using Microsoft.Extensions.Logging;
+using Moq;
+using NICE.Timelines.Common.Models;
 using NICE.Timelines.DB.Models;
 using NICE.Timelines.DB.Services;
 using NICE.Timelines.Test.Infrastructure;
@@ -12,6 +17,53 @@ namespace NICE.Timelines.Test.UnitTests
     public class DatabaseServiceTests : TestBase
     {
         [Fact]
+        public void SavesNewTaskToDatabaseCorrectly()
+        {
+            //Arrange
+            var context = new TimelinesContext(GetContextOptions());
+            var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
+            var databaseService = new DatabaseService(context, conversionService);
+
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "feeds", "single-task.json");
+            string json = File.ReadAllText(path);
+
+            var task = JsonSerializer.Deserialize<ClickUpTasks>(json).Tasks.First();
+
+            //Act
+            databaseService.SaveOrUpdateTimelineTask(task);
+            context.SaveChanges();
+
+            //Assert
+            context.TimelineTasks.Count().ShouldBe(1);
+        }
+
+        [Fact]
+        public void UpdatesTaskInDatabaseCorrectly()
+        {
+            //Arrange
+            var context = new TimelinesContext(GetContextOptions());
+            var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
+            var databaseService = new DatabaseService(context, conversionService);
+
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "feeds", "single-task.json");
+            string json = File.ReadAllText(path);
+
+            var task = JsonSerializer.Deserialize<ClickUpTasks>(json).Tasks.First();
+            databaseService.SaveOrUpdateTimelineTask(task);
+            context.SaveChanges();
+
+            task.DueDateSecondsSinceUnixEpochAsString = "1625816820555";
+
+            //Act
+            databaseService.SaveOrUpdateTimelineTask(task);
+            context.SaveChanges();
+
+            //Assert
+            context.TimelineTasks.Count().ShouldBe(1);
+            context.TimelineTasks.First().DueDate.ShouldBe(new DateTime(2021, 7, 9, 8, 47, 0, 555));
+        }
+
+        [Fact]
         public void CorrectTasksAreDeleted()
         {
             //Arrange
@@ -19,7 +71,7 @@ namespace NICE.Timelines.Test.UnitTests
             var taskId = "246";
 
             var context = new TimelinesContext(GetContextOptions());
-            var conversionService = new ConversionService();
+            var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
             var databaseService = new DatabaseService(context, conversionService);
 
             AddTimelineTask(context, Acid, 1, 1, "desc", "1", "1", "1", taskId, DateTime.Now, DateTime.Now);
