@@ -59,17 +59,23 @@ namespace NICE.Timelines.Services
                     .Concat(masterScheduleTasks.Where(t =>
                         !keyDateTasks.Any(x => x.ClickUpTaskId.Equals(t.ClickUpTaskId)))).ToList();
 
-                int? acid = null;
-
-                foreach (var task in tasks)
+                if (tasks.Count > 0)
                 {
-                    acid = _conversionService.GetACID(task); //TODO: get the ACID from the list, not from a task.
-                    _databaseService.SaveOrUpdateTimelineTask(task);
-                }
+                    int? acid = null;
 
-                var clickUpIdsThatShouldExistInTheDatabase = tasks.Select(task => task.ClickUpTaskId);
-                _databaseService.DeleteTasksAssociatedWithThisACIDExceptForTheseClickUpTaskIds(acid.Value,
-                    clickUpIdsThatShouldExistInTheDatabase);
+                    foreach (var task in tasks)
+                    {
+                        acid = _conversionService.GetACID(task); //TODO: get the ACID from the list, not from a task.
+                        _databaseService.SaveOrUpdateTimelineTask(task);
+                    }
+
+                    if (acid.HasValue)
+                    {
+                        var clickUpIdsThatShouldExistInTheDatabase = tasks.Select(task => task.ClickUpTaskId);
+                        _databaseService.DeleteTasksAssociatedWithThisACIDExceptForTheseClickUpTaskIds(acid.Value,
+                            clickUpIdsThatShouldExistInTheDatabase);
+                    }
+                }
             }
 
             return _context.SaveChanges();
@@ -149,12 +155,5 @@ namespace NICE.Timelines.Services
             var responseJson = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<T>(responseJson);
         }
-
-        //private async Task<IEnumerable<ClickUpTask>> GetKeyDateTasksAsync(ClickUpList list)
-        //{
-        //    var page = 0;
-        //    var tasks = (await GetTasksWithKeyDateInList(list.Id, page)).Tasks;
-        //    return tasks;
-        //}
     }
 }
