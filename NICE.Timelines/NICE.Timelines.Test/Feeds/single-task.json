@@ -26,8 +26,8 @@
           "required": false
         },
         {
-          "id": "421ba5af-2c61-438f-978f-2dad19c7498c",
-          "name": "Actual date",
+          "id": "4f578ec2-3ea9-48cf-a194-e6dabded629c",
+          "name": "Date completed",
           "type": "date",
           "type_config": {},
           "date_created": "1617884177046",

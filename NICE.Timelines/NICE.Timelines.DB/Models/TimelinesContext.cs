@@ -37,7 +37,6 @@ namespace NICE.Timelines.DB.Models
 
                 entity.Property(e => e.ACID).HasColumnName("ACID");
 
-                entity.Property(e => e.TaskTypeId).IsRequired();
                 entity.Property(e => e.PhaseId).IsRequired();
 
                 entity.Property(e => e.ClickUpSpaceId).HasMaxLength(255);

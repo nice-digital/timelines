@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using NICE.Timelines.Common.Models;
 using NICE.Timelines.DB.Models;
 
@@ -17,16 +16,25 @@ namespace NICE.Timelines.DB.Services
     {
         private readonly TimelinesContext _context;
         private readonly IConversionService _conversionService;
+        private readonly ILogger<DatabaseService> _logger;
 
-        public DatabaseService(TimelinesContext context, IConversionService conversionService)
+        public DatabaseService(TimelinesContext context, IConversionService conversionService, ILogger<DatabaseService> logger)
         {
             _context = context;
             _conversionService = conversionService;
+            _logger = logger;
         }
 
         public void SaveOrUpdateTimelineTask(ClickUpTask clickUpTask)
         {
             var timelineTaskToSaveOrUpdate = _conversionService.ConvertToTimelineTask(clickUpTask);
+
+            if (timelineTaskToSaveOrUpdate.ACID == 0 || timelineTaskToSaveOrUpdate.PhaseId == 0)
+            {
+                _logger.LogError($"{clickUpTask.ClickUpTaskId} - {clickUpTask.Name} was not saved, ACID or PhaseId missing");
+                return;
+            }
+            
             var existingTimelineTask = _context.TimelineTasks.SingleOrDefault(t => t.ClickUpTaskId.Equals(timelineTaskToSaveOrUpdate.ClickUpTaskId));
 
             if (existingTimelineTask != null) //it's an update
@@ -54,21 +62,20 @@ namespace NICE.Timelines.DB.Services
 
         private static bool TimelineTasksDiffer(TimelineTask task1, TimelineTask task2)
         {
-            if ((!task1.ACID.Equals(task2.ACID) ||
-                 (!task1.TaskTypeId.Equals(task2.TaskTypeId)) ||
-                 (!task1.PhaseId.Equals(task2.PhaseId)) ||
-                 (!task1.ClickUpSpaceId.Equals(task2.ClickUpSpaceId)) ||
-                 (!task1.ClickUpFolderId.Equals(task2.ClickUpFolderId)) ||
-                 (!task1.ClickUpTaskId.Equals(task2.ClickUpTaskId)) ||
-                 (!task1.ActualDate.Equals(task2.ActualDate)) ||
-                 (!task1.DueDate.Equals(task2.DueDate))))
+            if (!task1.ACID.Equals(task2.ACID) ||
+                 !task1.TaskTypeId.Equals(task2.TaskTypeId) ||
+                 !task1.PhaseId.Equals(task2.PhaseId) ||
+                 !task1.ClickUpSpaceId.Equals(task2.ClickUpSpaceId) ||
+                 !task1.ClickUpFolderId.Equals(task2.ClickUpFolderId) ||
+                 !task1.ClickUpTaskId.Equals(task2.ClickUpTaskId) ||
+                 !task1.DateCompleted.Equals(task2.DateCompleted) ||
+                 !task1.DueDate.Equals(task2.DueDate))
             {
                 return true;
             }
 
             return false;
         }
-
 
         private TimelineTask UpdateExistingTimelineTask(TimelineTask existingTimelineTask, TimelineTask timelineTaskToSaveOrUpdate)
         {
@@ -81,7 +88,7 @@ namespace NICE.Timelines.DB.Services
             existingTimelineTask.ClickUpFolderId = timelineTaskToSaveOrUpdate.ClickUpFolderId;
             existingTimelineTask.ClickUpTaskId = timelineTaskToSaveOrUpdate.ClickUpTaskId;
 
-            existingTimelineTask.ActualDate = timelineTaskToSaveOrUpdate.ActualDate;
+            existingTimelineTask.DateCompleted = timelineTaskToSaveOrUpdate.DateCompleted;
             existingTimelineTask.DueDate = timelineTaskToSaveOrUpdate.DueDate;
 
             return existingTimelineTask;

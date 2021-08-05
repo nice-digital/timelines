@@ -27,14 +27,14 @@ namespace NICE.Timelines.DB.Migrations
                     TimelineTaskId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ACID = table.Column<int>(type: "int", nullable: false),
-                    TaskTypeId = table.Column<int>(type: "int", nullable: false),
+                    TaskTypeId = table.Column<int>(type: "int", nullable: true),
                     PhaseId = table.Column<int>(type: "int", nullable: false),
                     ClickUpSpaceId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     ClickUpFolderId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     ClickUpListId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     ClickUpTaskId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     DueDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ActualDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DateCompleted = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {

@@ -133,9 +133,6 @@ namespace NICE.Timelines.DB.Migrations
                         .HasColumnType("int")
                         .HasColumnName("ACID");
 
-                    b.Property<DateTime?>("ActualDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("ClickUpFolderId")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
@@ -152,13 +149,16 @@ namespace NICE.Timelines.DB.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<DateTime?>("DateCompleted")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("DueDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("PhaseId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TaskTypeId")
+                    b.Property<int?>("TaskTypeId")
                         .HasColumnType("int");
 
                     b.HasKey("TimelineTaskId");

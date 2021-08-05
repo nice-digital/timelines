@@ -41,7 +41,6 @@ namespace NICE.Timelines.Services
         public async Task<int> ProcessSpace(string spaceId)
         {
             var allListsInSpace = new List<ClickUpList>();
-            var recordsSaveOrUpdated = 0;
 
             var allFoldersInSpace = (await GetFoldersInSpaceAsync(spaceId)).Folders;
             if (allFoldersInSpace.Any())
@@ -55,26 +54,20 @@ namespace NICE.Timelines.Services
             {
                 var keyDateTasks = (await GetTasksWithKeyDateInList(list.Id));
                 var masterScheduleTasks = (await GetTasksWithMasterScheduleInList(list.Id));
-                var tasks = keyDateTasks
-                    .Concat(masterScheduleTasks.Where(t =>
-                        !keyDateTasks.Any(x => x.ClickUpTaskId.Equals(t.ClickUpTaskId)))).ToList();
+                var tasks = keyDateTasks.Concat(masterScheduleTasks.Where(t => !keyDateTasks.Any(x => x.ClickUpTaskId.Equals(t.ClickUpTaskId)))).ToList();
 
-                if (tasks.Count > 0)
+                int? acid = null;
+
+                foreach (var task in tasks)
                 {
-                    int? acid = null;
+                    acid = _conversionService.GetACID(task); //TODO: get the ACID from the list, not from a task.
+                    _databaseService.SaveOrUpdateTimelineTask(task);
+                }
 
-                    foreach (var task in tasks)
-                    {
-                        acid = _conversionService.GetACID(task); //TODO: get the ACID from the list, not from a task.
-                        _databaseService.SaveOrUpdateTimelineTask(task);
-                    }
-
-                    if (acid.HasValue)
-                    {
-                        var clickUpIdsThatShouldExistInTheDatabase = tasks.Select(task => task.ClickUpTaskId);
-                        _databaseService.DeleteTasksAssociatedWithThisACIDExceptForTheseClickUpTaskIds(acid.Value,
-                            clickUpIdsThatShouldExistInTheDatabase);
-                    }
+                if (acid.HasValue && acid != 0)
+                {
+                    var clickUpIdsThatShouldExistInTheDatabase = tasks.Select(task => task.ClickUpTaskId);
+                    _databaseService.DeleteTasksAssociatedWithThisACIDExceptForTheseClickUpTaskIds(acid.Value, clickUpIdsThatShouldExistInTheDatabase);
                 }
             }
 

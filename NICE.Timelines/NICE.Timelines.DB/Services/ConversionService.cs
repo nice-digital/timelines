@@ -12,9 +12,9 @@ namespace NICE.Timelines.DB.Services
     {
         TimelineTask ConvertToTimelineTask(ClickUpTask clickUpTask);
         int GetACID(ClickUpTask clickUpTask);
-        int GetTaskTypeId(ClickUpTask clickUpTask);
+        int? GetTaskTypeId(ClickUpTask clickUpTask);
         int GetPhaseId(ClickUpTask clickUpTask);
-        DateTime? GetActualDate(ClickUpTask clickUpTask);
+        DateTime? GetDateCompleted(ClickUpTask clickUpTask);
         DateTime? GetDueDate(ClickUpTask clickUpTask);
     }
 
@@ -32,7 +32,7 @@ namespace NICE.Timelines.DB.Services
             var acid = GetACID(clickUpTask);
             var taskTypeId = GetTaskTypeId(clickUpTask);
             var phaseId = GetPhaseId(clickUpTask);
-            var actualDate = GetActualDate(clickUpTask);
+            var actualDate = GetDateCompleted(clickUpTask);
             var dueDate = GetDueDate(clickUpTask);
 
             return new TimelineTask(acid, taskTypeId, phaseId, clickUpTask.Space.Id, clickUpTask.Folder.Id, clickUpTask.List.Id, clickUpTask.ClickUpTaskId, dueDate, actualDate, null);
@@ -40,21 +40,28 @@ namespace NICE.Timelines.DB.Services
 
         public int GetACID(ClickUpTask clickUpTask)
         {
-            return int.Parse(clickUpTask.CustomFields.First(field => field.FieldId.Equals(Constants.ClickUp.Fields.ACID, StringComparison.InvariantCultureIgnoreCase)).Value.ToObject<string>());
-            //TODO: ACID is a string in clickup. needs to be a number.
+            var acidId = 0;
+            var acid = clickUpTask.CustomFields.First(field => field.FieldId.Equals(Constants.ClickUp.Fields.ACID, StringComparison.InvariantCultureIgnoreCase));
+            if (acid != null && acid.Value.ValueKind != JsonValueKind.Undefined)
+            {
+                var id = acid.Value.ToObject<string>();
+                acidId = int.Parse(id);
+            }
+            else
+                _logger.LogError($"acid for task: {clickUpTask.ClickUpTaskId} - {clickUpTask.Name} is null or undefined");
+
+            return acidId;
         }
 
-        public int GetTaskTypeId(ClickUpTask clickUpTask)
+        public int? GetTaskTypeId(ClickUpTask clickUpTask)
         {
-            var taskTypeId = 0;
+            int? taskTypeId = null;
             var taskType = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.TaskTypeId, StringComparison.InvariantCultureIgnoreCase));
             if (taskType != null && taskType.Value.ValueKind != JsonValueKind.Undefined)
             {
                 var id = taskType.Value.ToObject<string>();
                 taskTypeId = int.Parse(id);
             }
-            else
-                _logger.LogError($"taskType for task:{clickUpTask.ClickUpTaskId} is null or undefined");
             
             return taskTypeId;
         }
@@ -70,25 +77,23 @@ namespace NICE.Timelines.DB.Services
                 phaseId = int.Parse(id);
             }
             else
-                _logger.LogError($"phaseId for task:{clickUpTask.ClickUpTaskId} is null or undefined");
+                _logger.LogError($"phaseId for task:{clickUpTask.ClickUpTaskId} - {clickUpTask.Name}  is null or undefined");
 
             return phaseId;
         }
 
-        public DateTime? GetActualDate(ClickUpTask clickUpTask)
+        public DateTime? GetDateCompleted(ClickUpTask clickUpTask)
         {
-            DateTime? actualDate = null;
-            var actualDateValue = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.ActualDate, StringComparison.InvariantCultureIgnoreCase))?.Value;
+            DateTime? dateCompleted = null;
+            var dateCompletedValue = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.CompletedDate, StringComparison.InvariantCultureIgnoreCase))?.Value;
 
-            if (actualDateValue != null && actualDateValue.Value.ValueKind != JsonValueKind.Undefined)
+            if (dateCompletedValue != null && dateCompletedValue.Value.ValueKind != JsonValueKind.Undefined)
             {
-                var actualDateString = actualDateValue.Value.ToObject<string>();
-                actualDate = double.Parse(actualDateString).ToDateTime();
+                var dateCompletedString = dateCompletedValue.Value.ToObject<string>();
+                dateCompleted = double.Parse(dateCompletedString).ToDateTime();
             }
-            else
-                _logger.LogError($"Actual date for task:{clickUpTask.ClickUpTaskId} is null or empty");
 
-            return actualDate;
+            return dateCompleted;
         }
 
         public DateTime? GetDueDate(ClickUpTask clickUpTask)
@@ -96,8 +101,6 @@ namespace NICE.Timelines.DB.Services
             DateTime? dueDate = null;
             if (!string.IsNullOrEmpty(clickUpTask.DueDateSecondsSinceUnixEpochAsString)) 
                 dueDate = double.Parse(clickUpTask.DueDateSecondsSinceUnixEpochAsString).ToDateTime();
-            else
-                _logger.LogError($"dueDate for task:{clickUpTask.ClickUpTaskId} is null or empty");
 
             return dueDate;
         }

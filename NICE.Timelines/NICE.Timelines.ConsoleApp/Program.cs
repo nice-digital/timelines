@@ -62,8 +62,6 @@ namespace NICE.Timelines
             services.AddTransient<IConversionService, ConversionService>();
             services.AddTransient<IDatabaseService, DatabaseService>();
 
-
-
             _serviceProvider = services.BuildServiceProvider(validateScopes: true);
         }
 

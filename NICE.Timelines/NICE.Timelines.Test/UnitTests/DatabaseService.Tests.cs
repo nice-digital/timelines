@@ -22,7 +22,7 @@ namespace NICE.Timelines.Test.UnitTests
             //Arrange
             var context = new TimelinesContext(GetContextOptions());
             var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
-            var databaseService = new DatabaseService(context, conversionService);
+            var databaseService = new DatabaseService(context, conversionService, Mock.Of<ILogger<DatabaseService>>());
 
             string path = Path.Combine(Directory.GetCurrentDirectory(), "feeds", "single-task.json");
             string json = File.ReadAllText(path);
@@ -43,7 +43,7 @@ namespace NICE.Timelines.Test.UnitTests
             //Arrange
             var context = new TimelinesContext(GetContextOptions());
             var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
-            var databaseService = new DatabaseService(context, conversionService);
+            var databaseService = new DatabaseService(context, conversionService, Mock.Of<ILogger<DatabaseService>>());
 
             string path = Path.Combine(Directory.GetCurrentDirectory(), "feeds", "single-task.json");
             string json = File.ReadAllText(path);
@@ -72,7 +72,7 @@ namespace NICE.Timelines.Test.UnitTests
 
             var context = new TimelinesContext(GetContextOptions());
             var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
-            var databaseService = new DatabaseService(context, conversionService);
+            var databaseService = new DatabaseService(context, conversionService, Mock.Of<ILogger<DatabaseService>>());
 
             AddTimelineTask(context, Acid, 1, 1, "desc", "1", "1", "1", taskId, DateTime.Now, DateTime.Now);
             AddTimelineTask(context, Acid, 1, 1, "desc", "1", "1", "1", "2", DateTime.Now, DateTime.Now);
