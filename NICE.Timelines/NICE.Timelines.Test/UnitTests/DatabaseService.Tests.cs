@@ -38,6 +38,27 @@ namespace NICE.Timelines.Test.UnitTests
         }
 
         [Fact]
+        public void TaskIsNotSavedIfACIDAndPhaseIdIsMissing()
+        {
+            //Arrange
+            var context = new TimelinesContext(GetContextOptions());
+            var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
+            var databaseService = new DatabaseService(context, conversionService, Mock.Of<ILogger<DatabaseService>>());
+
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "feeds", "single-task-missing-acid-and-phaseid.json");
+            string json = File.ReadAllText(path);
+
+            var task = JsonSerializer.Deserialize<ClickUpTasks>(json).Tasks.First();
+
+            //Act
+            databaseService.SaveOrUpdateTimelineTask(task);
+            context.SaveChanges();
+
+            //Assert
+            context.TimelineTasks.Count().ShouldBe(0);
+        }
+
+        [Fact]
         public void UpdatesTaskInDatabaseCorrectly()
         {
             //Arrange

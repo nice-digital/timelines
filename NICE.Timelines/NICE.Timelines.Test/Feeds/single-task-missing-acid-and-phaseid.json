@@ -1,0 +1,71 @@
+{
+  "tasks": [
+    {
+      "id": "421ba5af-2c61-438f-978f-2dad19c7498c",
+      "name": "Post publication meeting with Company",
+      "due_date": "1624619478126",
+      "custom_fields": [
+        {
+          "id": "f673c2a1-4a09-45e6-b859-e3b0839c5402",
+          "name": "ACID",
+          "type": "number",
+          "type_config": {},
+          "date_created": "1625757450022",
+          "hide_from_guests": false,
+          "required": false
+        },
+        {
+          "id": "f82f0a8d-06bb-4845-a5e0-117a6605940c",
+          "name": "Task type ID",
+          "type": "number",
+          "type_config": {},
+          "date_created": "1625776188496",
+          "hide_from_guests": false,
+          "value": "7",
+          "required": false
+        },
+        {
+          "id": "4f578ec2-3ea9-48cf-a194-e6dabded629c",
+          "name": "Date completed",
+          "type": "date",
+          "type_config": {},
+          "date_created": "1617884177046",
+          "hide_from_guests": false,
+          "value": "1627095600000",
+          "required": false
+        },
+        {
+          "id": "13aee9a9-5d21-46bb-8821-70c155cacf75",
+          "name": "Phase ID",
+          "type": "number",
+          "type_config": {},
+          "date_created": "1627227217522",
+          "hide_from_guests": false,
+          "required": false
+        }
+      ],
+      "team_id": "263",
+      "permission_level": "create",
+      "list": {
+        "id": "774",
+        "name": "Timeline list",
+        "access": true
+      },
+      "project": {
+        "id": "236",
+        "name": "Timeline project",
+        "hidden": false,
+        "access": true
+      },
+      "folder": {
+        "id": "236",
+        "name": "Timeline folder",
+        "hidden": false,
+        "access": true
+      },
+      "space": {
+        "id": "583"
+      }
+    }
+  ]
+}

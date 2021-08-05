@@ -31,6 +31,23 @@ namespace NICE.Timelines.Test.UnitTests
         }
 
         [Fact]
+        public void NoACIDShouldReturn0()
+        {
+            //Arrange
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "feeds", "single-task-missing-acid-and-phaseid.json");
+            string json = File.ReadAllText(path);
+
+            var task = JsonSerializer.Deserialize<ClickUpTasks>(json).Tasks.First();
+            var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
+
+            //Act
+            var ACID = conversionService.GetACID(task);
+
+            //Assert
+            ACID.ShouldBe(0);
+        }
+
+        [Fact]
         public void CanGetTaskType()
         {
             //Arrange
@@ -63,7 +80,24 @@ namespace NICE.Timelines.Test.UnitTests
             //Assert
             phaseId.ShouldBe(12);
         }
-        
+
+        [Fact]
+        public void NoPhaseIdShouldReturn0()
+        {
+            //Arrange
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "feeds", "single-task-missing-acid-and-phaseid.json");
+            string json = File.ReadAllText(path);
+
+            var task = JsonSerializer.Deserialize<ClickUpTasks>(json).Tasks.First();
+            var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
+
+            //Act
+            var phaseId = conversionService.GetPhaseId(task);
+
+            //Assert
+            phaseId.ShouldBe(0);
+        }
+
         [Fact]
         public void CanGetDateCompleted()
         {
