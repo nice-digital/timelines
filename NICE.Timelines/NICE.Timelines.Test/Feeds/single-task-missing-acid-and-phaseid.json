@@ -20,8 +20,6 @@
           "type": "number",
           "type_config": {},
           "date_created": "1625776188496",
-          "hide_from_guests": false,
-          "value": "7",
           "required": false
         },
         {

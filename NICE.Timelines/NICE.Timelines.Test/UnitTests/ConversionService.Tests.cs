@@ -65,6 +65,23 @@ namespace NICE.Timelines.Test.UnitTests
         }
 
         [Fact]
+        public void NoTaskTypeShouldReturn0()
+        {
+            //Arrange
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "feeds", "single-task-missing-acid-and-phaseid.json");
+            string json = File.ReadAllText(path);
+
+            var task = JsonSerializer.Deserialize<ClickUpTasks>(json).Tasks.First();
+            var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
+
+            //Act
+            var taskTypeId = conversionService.GetTaskTypeId(task);
+
+            //Assert
+            taskTypeId.ShouldBe(0);
+        }
+
+        [Fact]
         public void CanGetPhase()
         {
             //Arrange
@@ -96,6 +113,40 @@ namespace NICE.Timelines.Test.UnitTests
 
             //Assert
             phaseId.ShouldBe(0);
+        }
+
+        [Fact]
+        public void CanGetOrderInPhase()
+        {
+            //Arrange
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "feeds", "single-task.json");
+            string json = File.ReadAllText(path);
+
+            var task = JsonSerializer.Deserialize<ClickUpTasks>(json).Tasks.First();
+            var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
+
+            //Act
+            var orderInPhase = conversionService.GetOrderInPhase(task);
+
+            //Assert
+            orderInPhase.ShouldBe(4);
+        }
+
+        [Fact]
+        public void NoOrderInPhaseShouldReturn0()
+        {
+            //Arrange
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "feeds", "single-task-missing-acid-and-phaseid.json");
+            string json = File.ReadAllText(path);
+
+            var task = JsonSerializer.Deserialize<ClickUpTasks>(json).Tasks.First();
+            var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
+
+            //Act
+            var orderInPhase = conversionService.GetOrderInPhase(task);
+
+            //Assert
+            orderInPhase.ShouldBe(0);
         }
 
         [Fact]
