@@ -32,10 +32,11 @@ namespace NICE.Timelines.DB.Services
             var acid = GetACID(clickUpTask);
             var taskTypeId = GetTaskTypeId(clickUpTask);
             var phaseId = GetPhaseId(clickUpTask);
+            var orderInPhase = GetOrderInPhase(clickUpTask);
             var actualDate = GetDateCompleted(clickUpTask);
             var dueDate = GetDueDate(clickUpTask);
 
-            return new TimelineTask(acid, taskTypeId, phaseId, clickUpTask.Space.Id, clickUpTask.Folder.Id, clickUpTask.List.Id, clickUpTask.ClickUpTaskId, dueDate, actualDate, null);
+            return new TimelineTask(acid, taskTypeId, phaseId, orderInPhase, clickUpTask.Space.Id, clickUpTask.Folder.Id, clickUpTask.List.Id, clickUpTask.ClickUpTaskId, dueDate, actualDate, null);
         }
 
         public int GetACID(ClickUpTask clickUpTask)
@@ -55,7 +56,7 @@ namespace NICE.Timelines.DB.Services
 
         public int? GetTaskTypeId(ClickUpTask clickUpTask)
         {
-            int? taskTypeId = null;
+            int? taskTypeId = 0;
             var taskType = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.TaskTypeId, StringComparison.InvariantCultureIgnoreCase));
             if (taskType != null && taskType.Value.ValueKind != JsonValueKind.Undefined)
             {
@@ -80,6 +81,20 @@ namespace NICE.Timelines.DB.Services
                 _logger.LogError($"phaseId for task:{clickUpTask.ClickUpTaskId} - {clickUpTask.Name}  is null or undefined");
 
             return phaseId;
+        }
+
+        public int? GetOrderInPhase(ClickUpTask clickUpTask)
+        {
+            int? orderInPhase = null;
+
+            var orderInPhaseValue = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.OrderInPhase, StringComparison.InvariantCultureIgnoreCase))?.Value;
+            if (orderInPhaseValue != null && orderInPhaseValue.Value.ValueKind != JsonValueKind.Undefined)
+            {
+                var orderInPhaseString = orderInPhaseValue.Value.ToObject<string>();
+                orderInPhase = int.Parse(orderInPhaseString);
+            }
+
+            return orderInPhase;
         }
 
         public DateTime? GetDateCompleted(ClickUpTask clickUpTask)

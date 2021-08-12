@@ -95,9 +95,9 @@ namespace NICE.Timelines.Test.UnitTests
             var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
             var databaseService = new DatabaseService(context, conversionService, Mock.Of<ILogger<DatabaseService>>());
 
-            AddTimelineTask(context, Acid, 1, 1, "desc", "1", "1", "1", taskId, DateTime.Now, DateTime.Now);
-            AddTimelineTask(context, Acid, 1, 1, "desc", "1", "1", "1", "2", DateTime.Now, DateTime.Now);
-            AddTimelineTask(context, 2, 1, 1, "desc", "1", "1", "1", taskId, DateTime.Now, DateTime.Now);
+            AddTimelineTask(context, Acid, 1, 1, 1, "1", "1", "1", taskId, DateTime.Now, DateTime.Now);
+            AddTimelineTask(context, Acid, 1, 1, 1, "1", "1", "1", "2", DateTime.Now, DateTime.Now);
+            AddTimelineTask(context, 2, 1, 1, 1, "1", "1", "1", taskId, DateTime.Now, DateTime.Now);
 
             //Act
             databaseService.DeleteTasksAssociatedWithThisACIDExceptForTheseClickUpTaskIds(Acid, new List<string>() { taskId });

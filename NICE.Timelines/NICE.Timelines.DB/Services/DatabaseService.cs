@@ -65,6 +65,7 @@ namespace NICE.Timelines.DB.Services
             if (!task1.ACID.Equals(task2.ACID) ||
                  !task1.TaskTypeId.Equals(task2.TaskTypeId) ||
                  !task1.PhaseId.Equals(task2.PhaseId) ||
+                 !task1.OrderInPhase.Equals(task2.OrderInPhase) ||
                  !task1.ClickUpSpaceId.Equals(task2.ClickUpSpaceId) ||
                  !task1.ClickUpFolderId.Equals(task2.ClickUpFolderId) ||
                  !task1.ClickUpTaskId.Equals(task2.ClickUpTaskId) ||
@@ -83,6 +84,7 @@ namespace NICE.Timelines.DB.Services
 
             existingTimelineTask.TaskTypeId = timelineTaskToSaveOrUpdate.TaskTypeId;
             existingTimelineTask.PhaseId = timelineTaskToSaveOrUpdate.PhaseId;
+            existingTimelineTask.OrderInPhase = timelineTaskToSaveOrUpdate.OrderInPhase;
 
             existingTimelineTask.ClickUpSpaceId = timelineTaskToSaveOrUpdate.ClickUpSpaceId;
             existingTimelineTask.ClickUpFolderId = timelineTaskToSaveOrUpdate.ClickUpFolderId;
@@ -90,7 +92,7 @@ namespace NICE.Timelines.DB.Services
 
             existingTimelineTask.CompletedDate = timelineTaskToSaveOrUpdate.CompletedDate;
             existingTimelineTask.DueDate = timelineTaskToSaveOrUpdate.DueDate;
-
+            
             return existingTimelineTask;
         }
     }
