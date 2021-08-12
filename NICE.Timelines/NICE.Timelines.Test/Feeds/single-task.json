@@ -44,6 +44,16 @@
           "hide_from_guests": false,
           "value": "12",
           "required": false
+        },
+        {
+          "id": "ccc001ea-b7bf-4195-9452-ddabf63e78b4",
+          "name": "Order in phase",
+          "type": "number",
+          "type_config": {},
+          "date_created": "1625776262806",
+          "hide_from_guests": false,
+          "value": "4",
+          "required": false
         }
       ],
       "team_id": "263",

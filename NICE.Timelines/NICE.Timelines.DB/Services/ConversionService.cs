@@ -12,7 +12,7 @@ namespace NICE.Timelines.DB.Services
     {
         TimelineTask ConvertToTimelineTask(ClickUpTask clickUpTask);
         int GetACID(ClickUpTask clickUpTask);
-        int? GetTaskTypeId(ClickUpTask clickUpTask);
+        int GetTaskTypeId(ClickUpTask clickUpTask);
         int GetPhaseId(ClickUpTask clickUpTask);
         DateTime? GetDateCompleted(ClickUpTask clickUpTask);
         DateTime? GetDueDate(ClickUpTask clickUpTask);
@@ -54,9 +54,9 @@ namespace NICE.Timelines.DB.Services
             return acidId;
         }
 
-        public int? GetTaskTypeId(ClickUpTask clickUpTask)
+        public int GetTaskTypeId(ClickUpTask clickUpTask)
         {
-            int? taskTypeId = 0;
+            int taskTypeId = 0;
             var taskType = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.TaskTypeId, StringComparison.InvariantCultureIgnoreCase));
             if (taskType != null && taskType.Value.ValueKind != JsonValueKind.Undefined)
             {
@@ -83,9 +83,9 @@ namespace NICE.Timelines.DB.Services
             return phaseId;
         }
 
-        public int? GetOrderInPhase(ClickUpTask clickUpTask)
+        public int GetOrderInPhase(ClickUpTask clickUpTask)
         {
-            int? orderInPhase = null;
+            int orderInPhase = 0;
 
             var orderInPhaseValue = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.OrderInPhase, StringComparison.InvariantCultureIgnoreCase))?.Value;
             if (orderInPhaseValue != null && orderInPhaseValue.Value.ValueKind != JsonValueKind.Undefined)
@@ -93,6 +93,8 @@ namespace NICE.Timelines.DB.Services
                 var orderInPhaseString = orderInPhaseValue.Value.ToObject<string>();
                 orderInPhase = int.Parse(orderInPhaseString);
             }
+            else
+                _logger.LogError($"orderInPhase for task:{clickUpTask.ClickUpTaskId} - {clickUpTask.Name}  is null or undefined");
 
             return orderInPhase;
         }

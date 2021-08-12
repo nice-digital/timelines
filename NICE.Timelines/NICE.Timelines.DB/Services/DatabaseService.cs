@@ -29,9 +29,9 @@ namespace NICE.Timelines.DB.Services
         {
             var timelineTaskToSaveOrUpdate = _conversionService.ConvertToTimelineTask(clickUpTask);
 
-            if (timelineTaskToSaveOrUpdate.ACID == 0 || timelineTaskToSaveOrUpdate.PhaseId == 0)
+            if (timelineTaskToSaveOrUpdate.ACID == 0 || timelineTaskToSaveOrUpdate.PhaseId == 0 || timelineTaskToSaveOrUpdate.OrderInPhase == 0)
             {
-                _logger.LogError($"{clickUpTask.ClickUpTaskId} - {clickUpTask.Name} was not saved, ACID or PhaseId missing");
+                _logger.LogError($"{clickUpTask.ClickUpTaskId} - {clickUpTask.Name} was not saved, ACID, PhaseId or OrderInPhase missing");
                 return;
             }
             
