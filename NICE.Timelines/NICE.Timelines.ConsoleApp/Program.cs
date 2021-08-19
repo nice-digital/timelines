@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using NICE.Timelines.Configuration;
 using NICE.Timelines.DB.Models;
 using NICE.Timelines.DB.Services;
@@ -34,11 +35,19 @@ namespace NICE.Timelines
             RegisterServices(clickUpConfig, Configuration.GetConnectionString("DefaultConnection"));
 
             SeriLogger.Configure(Configuration);
-
+ 
             var scope = _serviceProvider.CreateScope();
 
-            var context = scope.ServiceProvider.GetService<TimelinesContext>();
-            context.Database.Migrate();
+            try
+            {
+                var context = scope.ServiceProvider.GetService<TimelinesContext>();
+                context.Database.Migrate();
+            }
+            catch (Exception e)
+            {
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                logger.LogError(e, "An error occurred while migrating the database.");
+            }
 
             await scope.ServiceProvider.GetRequiredService<ISyncService>().Process(); //entry point
             
