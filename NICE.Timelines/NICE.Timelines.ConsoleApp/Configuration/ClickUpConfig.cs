@@ -18,6 +18,7 @@ namespace NICE.Timelines.Configuration
         public string GetLists { get; set; }
         public string GetFolderlessLists { get; set; }
         public string GetKeyDateTasks { get; set; }
+        public string GetKeyInfoTasks { get; set; }
         public string GetMasterScheduleTasks { get; set; }
     }
 }

@@ -52,9 +52,12 @@ namespace NICE.Timelines.Services
 
             foreach (var list in allListsInSpace) //a list should have a unique ACID
             {
-                var keyDateTasks = (await GetTasksWithKeyDateInList(list.Id));
-                var masterScheduleTasks = (await GetTasksWithMasterScheduleInList(list.Id));
-                var tasks = keyDateTasks.Concat(masterScheduleTasks.Where(t => !keyDateTasks.Any(x => x.ClickUpTaskId.Equals(t.ClickUpTaskId)))).ToList();
+                var keyDateTasks = (await GetTaskList(list.Id, _clickUpConfig.GetKeyDateTasks));
+                var keyInfoTasks = (await GetTaskList(list.Id, _clickUpConfig.GetKeyInfoTasks));
+                var masterScheduleTasks = (await GetTaskList(list.Id, _clickUpConfig.GetMasterScheduleTasks));
+
+                var keyTasks = keyDateTasks.Concat(keyInfoTasks.Where(t => !keyDateTasks.Any(x => x.ClickUpTaskId.Equals(t.ClickUpTaskId)))).ToList();
+                var tasks = keyTasks.Concat(masterScheduleTasks.Where(t => !keyTasks.Any(x => x.ClickUpTaskId.Equals(t.ClickUpTaskId)))).ToList();
 
                 int? acid = null;
 
@@ -100,29 +103,14 @@ namespace NICE.Timelines.Services
             return (await ReturnClickUpData<ClickUpLists>(_clickUpConfig.GetFolderlessLists, spaceId));
         }
 
-        private async Task<List<ClickUpTask>> GetTasksWithKeyDateInList(string listId)
+        private async Task<List<ClickUpTask>> GetTaskList(string listId, string uri)
         {
             var page = 0;
             var tasks = new ClickUpTasks();
             var allTasks = new List<ClickUpTask>();
             do
             {
-                tasks = (await ReturnClickUpData<ClickUpTasks>(_clickUpConfig.GetKeyDateTasks, listId, page));
-                allTasks.AddRange(tasks.Tasks);
-                page += 1;
-            } while (tasks.Tasks.Count() == 100);
-
-            return allTasks;
-        }
-
-        private async Task<List<ClickUpTask>> GetTasksWithMasterScheduleInList(string listId)
-        {
-            var page = 0;
-            var tasks = new ClickUpTasks();
-            var allTasks = new List<ClickUpTask>();
-            do
-            {
-                tasks = (await ReturnClickUpData<ClickUpTasks>(_clickUpConfig.GetMasterScheduleTasks, listId, page));
+                tasks = (await ReturnClickUpData<ClickUpTasks>(uri, listId, page));
                 allTasks.AddRange(tasks.Tasks);
                 page += 1;
             } while (tasks.Tasks.Count() == 100);
