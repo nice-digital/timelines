@@ -31,8 +31,10 @@ namespace NICE.Timelines
 
             ClickUpConfig clickUpConfig = new ClickUpConfig();
             Configuration.Bind("ClickUp", clickUpConfig);
+            EmailConfig emailConfig = new EmailConfig();
+            Configuration.Bind("Email", emailConfig);
 
-            RegisterServices(clickUpConfig, Configuration.GetConnectionString("DefaultConnection"));
+            RegisterServices(clickUpConfig, emailConfig, Configuration.GetConnectionString("DefaultConnection"));
 
             SeriLogger.Configure(Configuration);
  
@@ -54,14 +56,16 @@ namespace NICE.Timelines
             DisposeServices();
         }
 
-        private static void RegisterServices(ClickUpConfig clickUpConfig, string databaseConnectionString)
+        private static void RegisterServices(ClickUpConfig clickUpConfig, EmailConfig emailConfig, string databaseConnectionString)
         {
             var services = new ServiceCollection(); //again unusually for a console app, setting up DI, in order to support testing.
 
             services.AddLogging(configure => configure.AddSerilog());
             services.AddSingleton(serviceProvider => clickUpConfig);
+            services.AddSingleton(serviceProvider => emailConfig);
             services.AddTransient<ISyncService, SyncService>();
             services.AddTransient<IClickUpService, ClickUpService>();
+            services.AddTransient<IEmailService, EmailService>();
             services.AddHttpClient();
 
             var contextOptionsBuilder = new DbContextOptionsBuilder<TimelinesContext>();
