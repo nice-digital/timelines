@@ -15,18 +15,21 @@ namespace NICE.Timelines.Services
         private readonly IClickUpService _clickUpService;
         private readonly ClickUpConfig _clickUpConfig;
         private readonly ILogger<ISyncService> _logger;
+        private readonly IEmailService _emailService;
 
-        public SyncService(ClickUpConfig clickUpConfig, IClickUpService clickUpService, ILogger<ISyncService> logger)
+        public SyncService(ClickUpConfig clickUpConfig, IClickUpService clickUpService, ILogger<ISyncService> logger, IEmailService emailService)
         {
             _clickUpConfig = clickUpConfig;
             _clickUpService = clickUpService;
             _logger = logger;
+            _emailService = emailService;
         }
 
         public async Task Process()
         {
             Console.WriteLine("Started processing");
             _logger.LogInformation("Started processing");
+            _emailService.SendEmail("Timelines", "Test email from timelines");
 
             foreach (var spaceId in _clickUpConfig.SpaceIds)
             {
