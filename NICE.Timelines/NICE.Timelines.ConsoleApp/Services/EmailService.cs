@@ -1,4 +1,7 @@
-﻿using MailKit.Net.Smtp;
+﻿using System;
+using System.Security.Claims;
+using MailKit.Net.Smtp;
+using Microsoft.Extensions.Logging;
 using MimeKit;
 using NICE.Timelines.Configuration;
 
@@ -12,10 +15,12 @@ namespace NICE.Timelines.Services
     public class EmailService : IEmailService
     {
         private readonly EmailConfig _emailConfig;
+        private readonly ILogger<EmailService> _logger;
 
-        public EmailService(EmailConfig emailConfig)
+        public EmailService(EmailConfig emailConfig, ILogger<EmailService> logger)
         {
             _emailConfig = emailConfig;
+            _logger = logger;
         }
 
         public void SendEmail(string subject, string body)
@@ -41,7 +46,14 @@ namespace NICE.Timelines.Services
                     message.To.Clear();
                     message.To.Add(MailboxAddress.Parse(emailAddress));
 
-                    client.Send(message);
+                    try
+                    {
+                        client.Send(message);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError($"Error sending email: {e}");
+                    }
                 }
 
                 client.Disconnect(true);
