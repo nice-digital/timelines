@@ -29,7 +29,6 @@ namespace NICE.Timelines.Services
         {
             Console.WriteLine("Started processing");
             _logger.LogInformation("Started processing");
-            _emailService.SendEmail("Timelines", "Test email from timelines");
 
             foreach (var spaceId in _clickUpConfig.SpaceIds)
             {
