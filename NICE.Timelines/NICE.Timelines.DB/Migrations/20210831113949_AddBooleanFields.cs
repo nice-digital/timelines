@@ -27,7 +27,7 @@ namespace NICE.Timelines.DB.Migrations
                 oldNullable: true);
 
             migrationBuilder.AddColumn<string>(
-                name: "ClickUpFolderName",
+                name: "ClickUpListName",
                 table: "TimelineTask",
                 type: "nvarchar(max)",
                 nullable: true);
@@ -63,7 +63,7 @@ namespace NICE.Timelines.DB.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "ClickUpFolderName",
+                name: "ClickUpListName",
                 table: "TimelineTask");
 
             migrationBuilder.DropColumn(

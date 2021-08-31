@@ -10,7 +10,7 @@ using NICE.Timelines.DB.Models;
 namespace NICE.Timelines.DB.Migrations
 {
     [DbContext(typeof(TimelinesContext))]
-    [Migration("20210831094925_AddBooleanFields")]
+    [Migration("20210831113949_AddBooleanFields")]
     partial class AddBooleanFields
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -139,12 +139,12 @@ namespace NICE.Timelines.DB.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("ClickUpFolderName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ClickUpListId")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ClickUpListName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ClickUpSpaceId")
                         .HasMaxLength(255)

@@ -23,10 +23,10 @@ namespace NICE.Timelines.Common.Models
         public IEnumerable<ClickUpCustomField> CustomFields { get; set; }
 
         [JsonPropertyName("list")]
-        public ClickUpId List { get; set; }
+        public ClickUpList List { get; set; }
 
         [JsonPropertyName("folder")]
-        public ClickUpFolder Folder { get; set; }
+        public ClickUpId Folder { get; set; }
 
         [JsonPropertyName("space")]
         public ClickUpId Space { get; set; }

@@ -137,12 +137,12 @@ namespace NICE.Timelines.DB.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("ClickUpFolderName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ClickUpListId")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ClickUpListName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ClickUpSpaceId")
                         .HasMaxLength(255)

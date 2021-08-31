@@ -74,7 +74,7 @@ namespace NICE.Timelines.DB.Services
                 !task1.KeyDate.Equals(task2.KeyDate) ||
                 !task1.KeyInfo.Equals(task2.KeyInfo) ||
                 !task1.MasterSchedule.Equals(task2.MasterSchedule) ||
-                !task1.ClickUpFolderName.Equals(task2.ClickUpFolderName) ||
+                !task1.ClickUpListName.Equals(task2.ClickUpListName) ||
                 !task1.TaskName.Equals(task2.TaskName))
             {
                 return true;
@@ -94,7 +94,7 @@ namespace NICE.Timelines.DB.Services
 
             existingTimelineTask.ClickUpSpaceId = timelineTaskToSaveOrUpdate.ClickUpSpaceId;
             existingTimelineTask.ClickUpFolderId = timelineTaskToSaveOrUpdate.ClickUpFolderId;
-            existingTimelineTask.ClickUpFolderName = timelineTaskToSaveOrUpdate.ClickUpFolderName;
+            existingTimelineTask.ClickUpListName = timelineTaskToSaveOrUpdate.ClickUpListName;
             existingTimelineTask.ClickUpTaskId = timelineTaskToSaveOrUpdate.ClickUpTaskId;
 
             existingTimelineTask.CompletedDate = timelineTaskToSaveOrUpdate.CompletedDate;

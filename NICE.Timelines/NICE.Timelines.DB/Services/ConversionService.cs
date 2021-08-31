@@ -38,7 +38,7 @@ namespace NICE.Timelines.DB.Services
             var keyInfo = GetBooleanCustomField(clickUpTask, Constants.ClickUp.Fields.KeyInfo);
             var masterSchedule = GetBooleanCustomField(clickUpTask, Constants.ClickUp.Fields.MasterSchedule);
 
-            return new TimelineTask(clickUpTask.Name, acid, taskTypeId, phaseId, orderInPhase, clickUpTask.Space.Id, clickUpTask.Folder.Id, clickUpTask.Folder.Name, clickUpTask.List.Id, clickUpTask.ClickUpTaskId, dueDate, actualDate, keyDate, keyInfo, masterSchedule, null);
+            return new TimelineTask(clickUpTask.Name, acid, taskTypeId, phaseId, orderInPhase, clickUpTask.Space.Id, clickUpTask.Folder.Id, clickUpTask.List.Name, clickUpTask.List.Id, clickUpTask.ClickUpTaskId, dueDate, actualDate, keyDate, keyInfo, masterSchedule, null);
         }
 
         public DateTime? GetDateCompleted(ClickUpTask clickUpTask)
