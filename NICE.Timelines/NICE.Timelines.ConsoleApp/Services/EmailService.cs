@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Claims;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Logging;
 using MimeKit;
