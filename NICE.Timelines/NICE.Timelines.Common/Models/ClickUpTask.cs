@@ -26,7 +26,7 @@ namespace NICE.Timelines.Common.Models
         public ClickUpId List { get; set; }
 
         [JsonPropertyName("folder")]
-        public ClickUpId Folder { get; set; }
+        public ClickUpFolder Folder { get; set; }
 
         [JsonPropertyName("space")]
         public ClickUpId Space { get; set; }

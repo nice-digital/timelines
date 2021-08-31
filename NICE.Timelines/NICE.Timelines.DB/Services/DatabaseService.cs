@@ -63,14 +63,19 @@ namespace NICE.Timelines.DB.Services
         private static bool TimelineTasksDiffer(TimelineTask task1, TimelineTask task2)
         {
             if (!task1.ACID.Equals(task2.ACID) ||
-                 !task1.TaskTypeId.Equals(task2.TaskTypeId) ||
-                 !task1.PhaseId.Equals(task2.PhaseId) ||
-                 !task1.OrderInPhase.Equals(task2.OrderInPhase) ||
-                 !task1.ClickUpSpaceId.Equals(task2.ClickUpSpaceId) ||
-                 !task1.ClickUpFolderId.Equals(task2.ClickUpFolderId) ||
-                 !task1.ClickUpTaskId.Equals(task2.ClickUpTaskId) ||
-                 !task1.CompletedDate.Equals(task2.CompletedDate) ||
-                 !task1.DueDate.Equals(task2.DueDate))
+                !task1.TaskTypeId.Equals(task2.TaskTypeId) ||
+                !task1.PhaseId.Equals(task2.PhaseId) ||
+                !task1.OrderInPhase.Equals(task2.OrderInPhase) ||
+                !task1.ClickUpSpaceId.Equals(task2.ClickUpSpaceId) ||
+                !task1.ClickUpFolderId.Equals(task2.ClickUpFolderId) ||
+                !task1.ClickUpTaskId.Equals(task2.ClickUpTaskId) ||
+                !task1.CompletedDate.Equals(task2.CompletedDate) ||
+                !task1.DueDate.Equals(task2.DueDate) ||
+                !task1.KeyDate.Equals(task2.KeyDate) ||
+                !task1.KeyInfo.Equals(task2.KeyInfo) ||
+                !task1.MasterSchedule.Equals(task2.MasterSchedule) ||
+                !task1.ClickUpFolderName.Equals(task2.ClickUpFolderName) ||
+                !task1.TaskName.Equals(task2.TaskName))
             {
                 return true;
             }
@@ -80,6 +85,7 @@ namespace NICE.Timelines.DB.Services
 
         private TimelineTask UpdateExistingTimelineTask(TimelineTask existingTimelineTask, TimelineTask timelineTaskToSaveOrUpdate)
         {
+            existingTimelineTask.TaskName = timelineTaskToSaveOrUpdate.TaskName;
             existingTimelineTask.ACID = timelineTaskToSaveOrUpdate.ACID;
 
             existingTimelineTask.TaskTypeId = timelineTaskToSaveOrUpdate.TaskTypeId;
@@ -88,11 +94,16 @@ namespace NICE.Timelines.DB.Services
 
             existingTimelineTask.ClickUpSpaceId = timelineTaskToSaveOrUpdate.ClickUpSpaceId;
             existingTimelineTask.ClickUpFolderId = timelineTaskToSaveOrUpdate.ClickUpFolderId;
+            existingTimelineTask.ClickUpFolderName = timelineTaskToSaveOrUpdate.ClickUpFolderName;
             existingTimelineTask.ClickUpTaskId = timelineTaskToSaveOrUpdate.ClickUpTaskId;
 
             existingTimelineTask.CompletedDate = timelineTaskToSaveOrUpdate.CompletedDate;
             existingTimelineTask.DueDate = timelineTaskToSaveOrUpdate.DueDate;
-            
+
+            existingTimelineTask.KeyDate = timelineTaskToSaveOrUpdate.KeyDate;
+            existingTimelineTask.KeyInfo = timelineTaskToSaveOrUpdate.KeyInfo;
+            existingTimelineTask.MasterSchedule = timelineTaskToSaveOrUpdate.MasterSchedule;
+
             return existingTimelineTask;
         }
     }

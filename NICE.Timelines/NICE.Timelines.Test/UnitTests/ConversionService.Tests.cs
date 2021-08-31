@@ -24,7 +24,7 @@ namespace NICE.Timelines.Test.UnitTests
             var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
 
             //Act
-            var ACID = conversionService.GetACID(task);
+            var ACID = conversionService.GetIntegerCustomField(task, Constants.ClickUp.Fields.ACID, true, "acid");
 
             //Assert
             ACID.ShouldBe(674);
@@ -41,7 +41,7 @@ namespace NICE.Timelines.Test.UnitTests
             var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
 
             //Act
-            var ACID = conversionService.GetACID(task);
+            var ACID = conversionService.GetIntegerCustomField(task, Constants.ClickUp.Fields.ACID, true, "acid");
 
             //Assert
             ACID.ShouldBe(0);
@@ -58,7 +58,7 @@ namespace NICE.Timelines.Test.UnitTests
             var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
 
             //Act
-            var taskTypeId = conversionService.GetTaskTypeId(task);
+            var taskTypeId = conversionService.GetIntegerCustomField(task, Constants.ClickUp.Fields.TaskTypeId, false);
 
             //Assert
             taskTypeId.ShouldBe(7);
@@ -75,7 +75,7 @@ namespace NICE.Timelines.Test.UnitTests
             var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
 
             //Act
-            var taskTypeId = conversionService.GetTaskTypeId(task);
+            var taskTypeId = conversionService.GetIntegerCustomField(task, Constants.ClickUp.Fields.TaskTypeId, false);
 
             //Assert
             taskTypeId.ShouldBe(0);
@@ -92,7 +92,7 @@ namespace NICE.Timelines.Test.UnitTests
             var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
 
             //Act
-            var phaseId = conversionService.GetPhaseId(task);
+            var phaseId = conversionService.GetIntegerCustomField(task, Constants.ClickUp.Fields.PhaseId, true, "phaseId");
 
             //Assert
             phaseId.ShouldBe(12);
@@ -109,7 +109,7 @@ namespace NICE.Timelines.Test.UnitTests
             var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
 
             //Act
-            var phaseId = conversionService.GetPhaseId(task);
+            var phaseId = conversionService.GetIntegerCustomField(task, Constants.ClickUp.Fields.PhaseId, true, "phaseId");
 
             //Assert
             phaseId.ShouldBe(0);
@@ -126,7 +126,7 @@ namespace NICE.Timelines.Test.UnitTests
             var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
 
             //Act
-            var orderInPhase = conversionService.GetOrderInPhase(task);
+            var orderInPhase = conversionService.GetIntegerCustomField(task, Constants.ClickUp.Fields.OrderInPhase, true, "orderInPhase");
 
             //Assert
             orderInPhase.ShouldBe(4);
@@ -143,7 +143,7 @@ namespace NICE.Timelines.Test.UnitTests
             var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
 
             //Act
-            var orderInPhase = conversionService.GetOrderInPhase(task);
+            var orderInPhase = conversionService.GetIntegerCustomField(task, Constants.ClickUp.Fields.OrderInPhase, true, "orderInPhase");
 
             //Assert
             orderInPhase.ShouldBe(0);

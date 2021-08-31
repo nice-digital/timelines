@@ -63,7 +63,7 @@ namespace NICE.Timelines.Services
 
                 foreach (var task in tasks)
                 {
-                    acid = _conversionService.GetACID(task); //TODO: get the ACID from the list, not from a task.
+                    acid = _conversionService.GetIntegerCustomField(task, Constants.ClickUp.Fields.ACID, true, "acid"); //TODO: get the ACID from the list, not from a task.
                     _databaseService.SaveOrUpdateTimelineTask(task);
                 }
 
@@ -74,7 +74,18 @@ namespace NICE.Timelines.Services
                 }
             }
 
-            return _context.SaveChanges();
+            var recordsSaved = 0;
+            try
+            {
+                recordsSaved = _context.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Error saving to database: {e.Message}");
+                throw new Exception($"Error saving to database: {e.Message}");
+            }
+
+            return recordsSaved;
         }
 
         private async Task<ClickUpFolders> GetFoldersInSpaceAsync(string spaceId)

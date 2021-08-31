@@ -11,11 +11,10 @@ namespace NICE.Timelines.DB.Services
     public interface IConversionService
     {
         TimelineTask ConvertToTimelineTask(ClickUpTask clickUpTask);
-        int GetACID(ClickUpTask clickUpTask);
-        int GetTaskTypeId(ClickUpTask clickUpTask);
-        int GetPhaseId(ClickUpTask clickUpTask);
         DateTime? GetDateCompleted(ClickUpTask clickUpTask);
         DateTime? GetDueDate(ClickUpTask clickUpTask);
+        bool GetBooleanCustomField(ClickUpTask clickUpTask, string clickUpField);
+        int GetIntegerCustomField(ClickUpTask clickUpTask, string clickUpField, bool mandatory, string errorMessage);
     }
 
     public class ConversionService : IConversionService
@@ -29,74 +28,17 @@ namespace NICE.Timelines.DB.Services
 
         public TimelineTask ConvertToTimelineTask(ClickUpTask clickUpTask)
         {
-            var acid = GetACID(clickUpTask);
-            var taskTypeId = GetTaskTypeId(clickUpTask);
-            var phaseId = GetPhaseId(clickUpTask);
-            var orderInPhase = GetOrderInPhase(clickUpTask);
+            var acid = GetIntegerCustomField(clickUpTask, Constants.ClickUp.Fields.ACID, true, "acid");
+            var taskTypeId = GetIntegerCustomField(clickUpTask, Constants.ClickUp.Fields.TaskTypeId, false);
+            var phaseId = GetIntegerCustomField(clickUpTask, Constants.ClickUp.Fields.PhaseId, true, "phaseId");
+            var orderInPhase = GetIntegerCustomField(clickUpTask, Constants.ClickUp.Fields.OrderInPhase, true, "orderInPhase");
             var actualDate = GetDateCompleted(clickUpTask);
             var dueDate = GetDueDate(clickUpTask);
+            var keyDate = GetBooleanCustomField(clickUpTask, Constants.ClickUp.Fields.KeyDate);
+            var keyInfo = GetBooleanCustomField(clickUpTask, Constants.ClickUp.Fields.KeyInfo);
+            var masterSchedule = GetBooleanCustomField(clickUpTask, Constants.ClickUp.Fields.MasterSchedule);
 
-            return new TimelineTask(acid, taskTypeId, phaseId, orderInPhase, clickUpTask.Space.Id, clickUpTask.Folder.Id, clickUpTask.List.Id, clickUpTask.ClickUpTaskId, dueDate, actualDate, null);
-        }
-
-        public int GetACID(ClickUpTask clickUpTask)
-        {
-            var acidId = 0;
-            var acid = clickUpTask.CustomFields.First(field => field.FieldId.Equals(Constants.ClickUp.Fields.ACID, StringComparison.InvariantCultureIgnoreCase));
-            if (acid != null && acid.Value.ValueKind != JsonValueKind.Undefined)
-            {
-                var id = acid.Value.ToObject<string>();
-                acidId = int.Parse(id);
-            }
-            else
-                _logger.LogError($"acid for task: {clickUpTask.ClickUpTaskId} - {clickUpTask.Name} is null or undefined");
-
-            return acidId;
-        }
-
-        public int GetTaskTypeId(ClickUpTask clickUpTask)
-        {
-            int taskTypeId = 0;
-            var taskType = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.TaskTypeId, StringComparison.InvariantCultureIgnoreCase));
-            if (taskType != null && taskType.Value.ValueKind != JsonValueKind.Undefined)
-            {
-                var id = taskType.Value.ToObject<string>();
-                taskTypeId = int.Parse(id);
-            }
-            
-            return taskTypeId;
-        }
-
-        public int GetPhaseId(ClickUpTask clickUpTask)
-        {
-            var phaseId = 0;
-
-            var phaseField = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.PhaseId, StringComparison.InvariantCultureIgnoreCase));
-            if (phaseField != null && phaseField.Value.ValueKind != JsonValueKind.Undefined)
-            {
-                var id = phaseField.Value.ToObject<string>();
-                phaseId = int.Parse(id);
-            }
-            else
-                _logger.LogError($"phaseId for task:{clickUpTask.ClickUpTaskId} - {clickUpTask.Name}  is null or undefined");
-
-            return phaseId;
-        }
-
-        public int GetOrderInPhase(ClickUpTask clickUpTask)
-        {
-            int orderInPhase = 0;
-
-            var orderInPhaseValue = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.OrderInPhase, StringComparison.InvariantCultureIgnoreCase))?.Value;
-            if (orderInPhaseValue != null && orderInPhaseValue.Value.ValueKind != JsonValueKind.Undefined)
-            {
-                var orderInPhaseString = orderInPhaseValue.Value.ToObject<string>();
-                orderInPhase = int.Parse(orderInPhaseString);
-            }
-            else
-                _logger.LogError($"orderInPhase for task:{clickUpTask.ClickUpTaskId} - {clickUpTask.Name}  is null or undefined");
-
-            return orderInPhase;
+            return new TimelineTask(clickUpTask.Name, acid, taskTypeId, phaseId, orderInPhase, clickUpTask.Space.Id, clickUpTask.Folder.Id, clickUpTask.Folder.Name, clickUpTask.List.Id, clickUpTask.ClickUpTaskId, dueDate, actualDate, keyDate, keyInfo, masterSchedule, null);
         }
 
         public DateTime? GetDateCompleted(ClickUpTask clickUpTask)
@@ -120,6 +62,36 @@ namespace NICE.Timelines.DB.Services
                 dueDate = double.Parse(clickUpTask.DueDateSecondsSinceUnixEpochAsString).ToDateTime();
 
             return dueDate;
+        }
+        
+        public bool GetBooleanCustomField(ClickUpTask clickUpTask, string clickUpField)
+        {
+            var customField = false;
+            var customFieldValue = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(clickUpField, StringComparison.InvariantCultureIgnoreCase))?.Value;
+
+            if (customFieldValue != null && customFieldValue.Value.ValueKind != JsonValueKind.Undefined)
+            {
+                var customFieldString = customFieldValue.Value.ToObject<string>(); 
+                customField = bool.Parse(customFieldString);
+            }
+            
+            return customField;
+        }
+
+        public int GetIntegerCustomField(ClickUpTask clickUpTask, string clickUpField, bool mandatory, string errorMessage = "")
+        {
+            var customField = 0;
+
+            var customFieldValue = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(clickUpField, StringComparison.InvariantCultureIgnoreCase));
+            if (customFieldValue != null && customFieldValue.Value.ValueKind != JsonValueKind.Undefined)
+            {
+                var customFieldString = customFieldValue.Value.ToObject<string>();
+                customField = int.Parse(customFieldString);
+            }
+            else if (mandatory)
+                _logger.LogError($"{errorMessage} for task:{clickUpTask.ClickUpTaskId} - {clickUpTask.Name}  is null or undefined");
+
+            return customField;
         }
     }
 }
