@@ -59,6 +59,7 @@ namespace NICE.Timelines
             catch (Exception e)
             {
                 logger.LogError(e, "An error occurred during the process.");
+                Console.WriteLine($"An error occurred during the process. {e}");
             }
      
             logger.LogInformation("End");
