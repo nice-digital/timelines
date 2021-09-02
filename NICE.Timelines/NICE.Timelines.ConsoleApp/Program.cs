@@ -39,6 +39,7 @@ namespace NICE.Timelines
             SeriLogger.Configure(Configuration);
  
             var scope = _serviceProvider.CreateScope();
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
             try
             {
@@ -47,12 +48,21 @@ namespace NICE.Timelines
             }
             catch (Exception e)
             {
-                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
                 logger.LogError(e, "An error occurred while migrating the database.");
             }
 
-            await scope.ServiceProvider.GetRequiredService<ISyncService>().Process(); //entry point
-            
+            logger.LogInformation("Start");
+            try
+            {
+                await scope.ServiceProvider.GetRequiredService<ISyncService>().Process(); //entry point
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "An error occurred during the process.");
+            }
+     
+            logger.LogInformation("End");
+
             DisposeServices();
         }
 
