@@ -160,7 +160,7 @@ namespace NICE.Timelines.Test.UnitTests
             var conversionService = new ConversionService(Mock.Of<ILogger<ConversionService>>());
 
             //Act
-            var actualDate = conversionService.GetDateCompleted(task);
+            var actualDate = conversionService.GetDateCustomField(task, Constants.ClickUp.Fields.CompletedDate);
 
             //Assert
             actualDate.ShouldBe(new DateTime(2021, 7, 24, 4, 0, 0, 0));

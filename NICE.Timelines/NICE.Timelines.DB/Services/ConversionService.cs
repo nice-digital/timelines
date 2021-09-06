@@ -11,8 +11,8 @@ namespace NICE.Timelines.DB.Services
     public interface IConversionService
     {
         TimelineTask ConvertToTimelineTask(ClickUpTask clickUpTask);
-        DateTime? GetDateCompleted(ClickUpTask clickUpTask);
         DateTime? GetDueDate(ClickUpTask clickUpTask);
+        DateTime? GetDateCustomField(ClickUpTask clickUpTask, string clickUpField);
         bool GetBooleanCustomField(ClickUpTask clickUpTask, string clickUpField);
         int GetIntegerCustomField(ClickUpTask clickUpTask, string clickUpField, bool mandatory, string errorMessage);
     }
@@ -32,7 +32,7 @@ namespace NICE.Timelines.DB.Services
             var taskTypeId = GetIntegerCustomField(clickUpTask, Constants.ClickUp.Fields.TaskTypeId, false);
             var phaseId = GetIntegerCustomField(clickUpTask, Constants.ClickUp.Fields.PhaseId, true, "phaseId");
             var orderInPhase = GetIntegerCustomField(clickUpTask, Constants.ClickUp.Fields.OrderInPhase, true, "orderInPhase");
-            var actualDate = GetDateCompleted(clickUpTask);
+            var actualDate = GetDateCustomField(clickUpTask, Constants.ClickUp.Fields.CompletedDate);
             var dueDate = GetDueDate(clickUpTask);
             var keyDate = GetBooleanCustomField(clickUpTask, Constants.ClickUp.Fields.KeyDate);
             var keyInfo = GetBooleanCustomField(clickUpTask, Constants.ClickUp.Fields.KeyInfo);
@@ -41,7 +41,16 @@ namespace NICE.Timelines.DB.Services
             return new TimelineTask(clickUpTask.Name, acid, taskTypeId, phaseId, orderInPhase, clickUpTask.Space.Id, clickUpTask.Folder.Id, clickUpTask.List.Name, clickUpTask.List.Id, clickUpTask.ClickUpTaskId, dueDate, actualDate, keyDate, keyInfo, masterSchedule, null);
         }
 
-        public DateTime? GetDateCompleted(ClickUpTask clickUpTask)
+        public DateTime? GetDueDate(ClickUpTask clickUpTask)
+        {
+            if (!string.IsNullOrEmpty(clickUpTask.DueDateSecondsSinceUnixEpochAsString))
+                if (double.TryParse(clickUpTask.DueDateSecondsSinceUnixEpochAsString, out var dueDate))
+                    return dueDate.ToDateTime();
+
+            return null;
+        }
+
+        public DateTime? GetDateCustomField(ClickUpTask clickUpTask, string clickUpField)
         {
             var dateCompletedValue = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.CompletedDate, StringComparison.InvariantCultureIgnoreCase))?.Value;
 
@@ -55,15 +64,6 @@ namespace NICE.Timelines.DB.Services
             return null;
         }
 
-        public DateTime? GetDueDate(ClickUpTask clickUpTask)
-        {
-            if (!string.IsNullOrEmpty(clickUpTask.DueDateSecondsSinceUnixEpochAsString))
-                if (double.TryParse(clickUpTask.DueDateSecondsSinceUnixEpochAsString, out var dueDate))
-                    return dueDate.ToDateTime();
-
-            return null;
-        }
-        
         public bool GetBooleanCustomField(ClickUpTask clickUpTask, string clickUpField)
         {
             var customFieldValue = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(clickUpField, StringComparison.InvariantCultureIgnoreCase))?.Value;

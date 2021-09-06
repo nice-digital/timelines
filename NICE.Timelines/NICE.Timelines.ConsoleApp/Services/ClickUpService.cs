@@ -70,10 +70,13 @@ namespace NICE.Timelines.Services
                 if (acid.HasValue && acid != 0)
                 {
                     var clickUpIdsThatShouldExistInTheDatabase = tasks.Select(task => task.ClickUpTaskId);
-                    _databaseService.DeleteTasksAssociatedWithThisACIDExceptForTheseClickUpTaskIds(acid.Value, clickUpIdsThatShouldExistInTheDatabase);
+                    if (clickUpIdsThatShouldExistInTheDatabase.Count() > 0)
+                        _databaseService.DeleteTasksAssociatedWithThisACIDExceptForTheseClickUpTaskIds(acid.Value, clickUpIdsThatShouldExistInTheDatabase);
+                    else
+                        _logger.LogError($"clickUpIdsThatShouldExistInTheDatabase contained no values");
                 }
             }
-
+            
             var recordsSaved = 0;
             try
             {
