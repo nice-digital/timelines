@@ -43,55 +43,54 @@ namespace NICE.Timelines.DB.Services
 
         public DateTime? GetDateCompleted(ClickUpTask clickUpTask)
         {
-            DateTime? dateCompleted = null;
             var dateCompletedValue = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(Constants.ClickUp.Fields.CompletedDate, StringComparison.InvariantCultureIgnoreCase))?.Value;
 
             if (dateCompletedValue != null && dateCompletedValue.Value.ValueKind != JsonValueKind.Undefined)
             {
-                var dateCompletedString = dateCompletedValue.Value.ToObject<string>();
-                dateCompleted = double.Parse(dateCompletedString).ToDateTime();
+                var dateCompletedString = dateCompletedValue.Value.ToString();
+                if (double.TryParse(dateCompletedString, out var dateCompleted))
+                    return dateCompleted.ToDateTime();
             }
 
-            return dateCompleted;
+            return null;
         }
 
         public DateTime? GetDueDate(ClickUpTask clickUpTask)
         {
-            DateTime? dueDate = null;
-            if (!string.IsNullOrEmpty(clickUpTask.DueDateSecondsSinceUnixEpochAsString)) 
-                dueDate = double.Parse(clickUpTask.DueDateSecondsSinceUnixEpochAsString).ToDateTime();
+            if (!string.IsNullOrEmpty(clickUpTask.DueDateSecondsSinceUnixEpochAsString))
+                if (double.TryParse(clickUpTask.DueDateSecondsSinceUnixEpochAsString, out var dueDate))
+                    return dueDate.ToDateTime();
 
-            return dueDate;
+            return null;
         }
         
         public bool GetBooleanCustomField(ClickUpTask clickUpTask, string clickUpField)
         {
-            var customField = false;
             var customFieldValue = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(clickUpField, StringComparison.InvariantCultureIgnoreCase))?.Value;
 
             if (customFieldValue != null && customFieldValue.Value.ValueKind != JsonValueKind.Undefined)
             {
-                var customFieldString = customFieldValue.Value.ToObject<string>(); 
-                customField = bool.Parse(customFieldString);
+                var customFieldString = customFieldValue.Value.ToObject<string>();
+                if (bool.TryParse(customFieldString, out var customField))
+                    return customField;
             }
             
-            return customField;
+            return false;
         }
 
         public int GetIntegerCustomField(ClickUpTask clickUpTask, string clickUpField, bool mandatory, string errorMessage = "")
         {
-            var customField = 0;
-
             var customFieldValue = clickUpTask.CustomFields.FirstOrDefault(field => field.FieldId.Equals(clickUpField, StringComparison.InvariantCultureIgnoreCase));
             if (customFieldValue != null && customFieldValue.Value.ValueKind != JsonValueKind.Undefined)
             {
                 var customFieldString = customFieldValue.Value.ToObject<string>();
-                customField = int.Parse(customFieldString);
+                if (int.TryParse(customFieldString, out var customField))
+                    return customField;
             }
             else if (mandatory)
                 _logger.LogError($"{errorMessage} for task:{clickUpTask.ClickUpTaskId} - {clickUpTask.Name}  is null or undefined");
 
-            return customField;
+            return 0;
         }
     }
 }
