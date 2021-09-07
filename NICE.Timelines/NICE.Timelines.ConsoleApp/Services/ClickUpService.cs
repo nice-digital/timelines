@@ -70,25 +70,22 @@ namespace NICE.Timelines.Services
                 if (acid.HasValue && acid != 0)
                 {
                     var clickUpIdsThatShouldExistInTheDatabase = tasks.Select(task => task.ClickUpTaskId);
-                    if (clickUpIdsThatShouldExistInTheDatabase.Count() > 0)
+                    if (clickUpIdsThatShouldExistInTheDatabase.Any())
                         _databaseService.DeleteTasksAssociatedWithThisACIDExceptForTheseClickUpTaskIds(acid.Value, clickUpIdsThatShouldExistInTheDatabase);
                     else
-                        _logger.LogError($"clickUpIdsThatShouldExistInTheDatabase contained no values");
+                        _logger.LogError("clickUpIdsThatShouldExistInTheDatabase contained no values");
                 }
             }
             
-            var recordsSaved = 0;
             try
             {
-                recordsSaved = _context.SaveChanges();
+                return _context.SaveChanges();
             }
             catch (Exception e)
             {
                 _logger.LogError($"Error saving to database: {e.Message}");
                 throw new Exception($"Error saving to database: {e.Message}");
             }
-
-            return recordsSaved;
         }
 
         private async Task<ClickUpFolders> GetFoldersInSpaceAsync(string spaceId)
