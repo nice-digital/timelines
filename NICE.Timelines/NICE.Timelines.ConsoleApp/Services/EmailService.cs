@@ -26,7 +26,7 @@ namespace NICE.Timelines.Services
         {
             using (var client = new SmtpClient())
             {
-                client.Connect(_emailConfig.Server, _emailConfig.Port, false);
+                client.Connect(_emailConfig.Server, _emailConfig.Port, true);
                 if (!string.IsNullOrEmpty(_emailConfig.Username) && !string.IsNullOrEmpty(_emailConfig.Password))
                 {
                     client.Authenticate(_emailConfig.Username, _emailConfig.Password);
