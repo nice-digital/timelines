@@ -29,7 +29,6 @@ namespace NICE.Timelines.Services
         {
             Console.WriteLine("Started processing");
             _logger.LogInformation("Started processing");
-            _emailService.SendEmail("Timelines test", "testing the email configuration");
 
             try
             {
