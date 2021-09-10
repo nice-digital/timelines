@@ -51,18 +51,8 @@ namespace NICE.Timelines
                 logger.LogError(e, "An error occurred while migrating the database.");
             }
 
-            logger.LogInformation("Start");
-            try
-            {
-                await scope.ServiceProvider.GetRequiredService<ISyncService>().Process(); //entry point
-            }
-            catch (Exception e)
-            {
-                logger.LogError(e, "An error occurred during the process.");
-                Console.WriteLine($"An error occurred during the process. {e}");
-            }
-     
-            logger.LogInformation("End");
+            await scope.ServiceProvider.GetRequiredService<ISyncService>().Process(); //entry point
+       
 
             DisposeServices();
         }

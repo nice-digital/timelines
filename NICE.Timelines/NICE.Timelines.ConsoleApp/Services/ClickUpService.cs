@@ -83,8 +83,9 @@ namespace NICE.Timelines.Services
             }
             catch (Exception e)
             {
-                _logger.LogError($"Error saving to database: {e.Message}");
-                throw new Exception($"Error saving to database: {e.Message}");
+                var message = e.InnerException != null ? e.InnerException.Message : e.Message;
+                _logger.LogError($"Error saving to database: {message}");
+                throw new Exception($"Error saving to database: {message}");
             }
         }
 
