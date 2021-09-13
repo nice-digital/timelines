@@ -17,6 +17,7 @@ namespace NICE.Timelines.Services
     public interface IClickUpService
     {
         Task<int> ProcessSpace(string spaceId);
+        Task<T> ReturnClickUpData<T>(string uri, string id, int? page = null);
     }
 
     public class ClickUpService : IClickUpService
@@ -130,7 +131,7 @@ namespace NICE.Timelines.Services
             return allTasks;
         }
 
-        private async Task<T> ReturnClickUpData<T>(string uri, string id, int? page = null)
+        public async Task<T> ReturnClickUpData<T>(string uri, string id, int? page = null)
         {
             var relativeUri = string.Format(uri, id, page);
             var requestUri = _clickUpConfig.BaseUrl + relativeUri;
@@ -142,6 +143,7 @@ namespace NICE.Timelines.Services
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 _logger.LogError($"Non-200 received from ClickUp: {(int)response.StatusCode}");
+                Console.WriteLine($"Non-200 received from ClickUp: {(int)response.StatusCode}");
                 throw new Exception($"Non-200 received from ClickUp: {(int) response.StatusCode}");
             }
 
